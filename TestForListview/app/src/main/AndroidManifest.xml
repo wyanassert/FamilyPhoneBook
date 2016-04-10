@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.administrator.phonebook">
+    package="com.example.wyan.testforlistview">
 
     <application
         android:allowBackup="true"
@@ -15,11 +15,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".AllCallLogActivity"
-            android:label="@string/title_activity_all_call_log"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".MultipleItemsList"></activity>
     </application>
 
 </manifest>

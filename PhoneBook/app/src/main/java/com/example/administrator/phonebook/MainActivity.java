@@ -59,7 +59,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     private void jumpToCallLog() {
-        Intent intent = new Intent(this, AllCallLogActivity.class);
+        Intent intent = new Intent(this, MultipleItemsList.class);
         String message = "test";
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
