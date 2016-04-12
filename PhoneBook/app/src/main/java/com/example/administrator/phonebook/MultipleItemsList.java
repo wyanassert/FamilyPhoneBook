@@ -20,17 +20,17 @@ import com.example.administrator.phonebook.R;
 
 public class MultipleItemsList extends Activity {
 
-        ListView listView;
-        MyAdapter listAdapter;
-        ArrayList<String> listString;
+    ListView listView;
+    MyAdapter listAdapter;
+    ArrayList<String> listString;
 
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.call_log_contact);
             listView = (ListView)this.findViewById(R.id.listView);
             listString = new ArrayList<String>();
-            for(int i = 0 ; i < 100 ; i++)
+            for(int i = 0 ; i < 10 ; i++)
             {
                 listString.add(Integer.toString(i));
             }
@@ -43,7 +43,7 @@ public class MultipleItemsList extends Activity {
             LinearLayout linearLayout = null;
             LayoutInflater inflater;
             TextView tex;
-            final int VIEW_TYPE = 3;
+            final int VIEW_TYPE = 2;
             final int TYPE_1 = 0;
             final int TYPE_2 = 1;
 
@@ -63,20 +63,17 @@ public class MultipleItemsList extends Activity {
             // @Override
             public int getItemViewType(int position) {
                 // TODO Auto-generated method stub
-                int p = position%6;
-                if(p == 0)
+                if(position == 0)
                     return TYPE_1;
-                else if(p < 3)
-                    return TYPE_2;
                 else
-                    return TYPE_1;
+                    return TYPE_2;
             }
 
-        @Override
-        public int getViewTypeCount() {
+            @Override
+            public int getViewTypeCount() {
             // TODO Auto-generated method stub
                 return 2;
-        }
+            }
             @Override
             public Object getItem(int arg0) {
             // TODO Auto-generated method stub
@@ -96,62 +93,62 @@ public class MultipleItemsList extends Activity {
                 viewHolder2 holder2 = null;
                 int type = getItemViewType(position);
 
-            //无convertView，需要new出各个控件
-            if(convertView == null)
-            {
-                Log.e("convertView = ", " NULL");
-
-                //按当前所需的样式，确定new的布局
-                switch(type)
+                //无convertView，需要new出各个控件
+                if(convertView == null)
                 {
-                    case TYPE_1:
-                        convertView = inflater.inflate(R.layout.call_log_cell, parent, false);
-                        holder1 = new viewHolder1();
-                        holder1.textView = (TextView)convertView.findViewById(R.id.info1);
-                        Log.e("convertView = ", "NULL TYPE_1");
-                        convertView.setTag(holder1);
-                        break;
-                    case TYPE_2:
-                        convertView = inflater.inflate(R.layout.all_log_cell_contact, parent, false);
-                        holder2 = new viewHolder2();
-                        holder2.textView = (TextView)convertView.findViewById(R.id.info1);
-                        Log.e("convertView = ", "NULL TYPE_2");
-                        convertView.setTag(holder2);
+                    Log.e("convertView = ", " NULL");
+
+                    //按当前所需的样式，确定new的布局
+                    switch(type)
+                    {
+                        case TYPE_1:
+                            convertView = inflater.inflate(R.layout.call_log_cell, parent, false);
+                            holder1 = new viewHolder1();
+                            holder1.textView = (TextView)convertView.findViewById(R.id.info1);
+                            Log.e("convertView = ", "NULL TYPE_1");
+                            convertView.setTag(holder1);
+                            break;
+                        case TYPE_2:
+                            convertView = inflater.inflate(R.layout.all_log_cell_contact, parent, false);
+                            holder2 = new viewHolder2();
+                            holder2.textView = (TextView)convertView.findViewById(R.id.info1);
+                            Log.e("convertView = ", "NULL TYPE_2");
+                            convertView.setTag(holder2);
                             break;
                     }
                 }else{
                 //有convertView，按样式，取得不用的布局
-                switch(type)
-                {
-                    case TYPE_1:
-                        holder1 = (viewHolder1) convertView.getTag();
-                        Log.e("convertView !!!!!!= ", "NULL TYPE_1");
-                        break;
-                    case TYPE_2:
-                        holder2 = (viewHolder2) convertView.getTag();
-                        Log.e("convertView !!!!!!= ", "NULL TYPE_2");
-                        break;
+                        switch(type)
+                        {
+                            case TYPE_1:
+                            holder1 = (viewHolder1) convertView.getTag();
+                                Log.e("convertView !!!!!!= ", "NULL TYPE_1");
+                                break;
+                            case TYPE_2:
+                                holder2 = (viewHolder2) convertView.getTag();
+                                Log.e("convertView !!!!!!= ", "NULL TYPE_2");
+                                break;
 
-                    }
+                        }
                 }
 
-            //设置资源
-            switch(type)
-            {
-                case TYPE_1:
-//                    holder1.textView.setText(Integer.toString(position));
-                    break;
-                case TYPE_2:
-//                    holder2.textView.setText(Integer.toString(position));
-                    break;
+                    //设置资源
+                    switch(type)
+                    {
+                        case TYPE_1:
+    //                      holder1.textView.setText(Integer.toString(position));
+                            break;
+                        case TYPE_2:
+//                          holder2.textView.setText(Integer.toString(position));
+                            break;
 
-            }
+                    }
 
-            return convertView;
+                return convertView;
             }
         }
 
-    class viewHolder1 {
+        class viewHolder1 {
         TextView textView;
     }
     class viewHolder2 {
