@@ -30,18 +30,20 @@ public class AllCallLogActivity extends Activity {
 
     private ListView listView;
     MyAdapter listAdapter;
-    ArrayList <String> listString;
+    ContactModel contact;
+    ArrayList <CallLogCellModel> listString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.call_log_contact);
         listView = (ListView)this.findViewById(R.id.listView);
-        listString = new ArrayList<String>();
+        listString = new ArrayList<CallLogCellModel>();
         for(int i = 0 ; i < 10 ; i++)
         {
-            listString.add(Integer.toString(i));
+            listString.add(new CallLogCellModel(i));
         }
+        contact = new ContactModel();
         listAdapter = new MyAdapter(this);
         listView.setAdapter(listAdapter);
     }
@@ -65,7 +67,7 @@ public class AllCallLogActivity extends Activity {
 
         public int getCount()
         {
-            return listString.size();
+            return listString.size() + 1;
         }
 
         public int getItemViewType(int position)
@@ -128,26 +130,21 @@ public class AllCallLogActivity extends Activity {
                 {
                     case TYPE_0:
                         holder1 = (ViewHolder1) convertView.getTag();
-                        Log.e("convertView !!!!!!= ", "NULL TYPE_1");
                         break;
                     case TYPE_1:
                         holder2 = (ViewHolder2) convertView.getTag();
-                        Log.e("convertView !!!!!!= ", "NULL TYPE_2");
                         break;
                 }
             }
 
             switch (type)
             {
+
                 case TYPE_0:
-                    holder1.textView.setText("contact");
-                    holder1.imageView.setImageResource(R.drawable.image_contact_default);
-                    holder1.title.setText("contect_name");
+                    holder1.fillData(contact);
                     break;
                 case TYPE_1:
-                    holder2.textView.setText("callLog");
-                    holder2.imageView.setImageResource(R.drawable.image_call);
-                    holder2.title.setText("call_log_title");
+                    holder2.fillData(listString.get(position - 1));
                     break;
             }
 
@@ -160,11 +157,25 @@ public class AllCallLogActivity extends Activity {
         TextView textView;
         ImageView imageView;
         TextView title;
+
+        public void fillData(ContactModel model)
+        {
+            this.textView.setText(model.phonenumber);
+            this.imageView.setImageResource(R.drawable.image_contact_default);
+            this.title.setText(model.name);
+        }
     }
     class ViewHolder2
     {
         TextView textView;
         ImageView imageView;
         TextView title;
+
+        public void fillData(CallLogCellModel model)
+        {
+            this.textView.setText(model.phoneNumber);
+            this.imageView.setImageResource(R.drawable.image_call);
+            this.title.setText(model.name);
+        }
     }
 }
