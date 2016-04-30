@@ -5,7 +5,7 @@
     android:layout_height="200dp">
 
 
-    <ImageView android:id="@+id/img"
+    <ImageView android:id="@+id/img0"
         android:layout_width="180dp"
         android:layout_height="180dp"
         android:scaleType="centerCrop"
@@ -15,12 +15,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <TextView android:id="@+id/title"
+        <TextView android:id="@+id/title0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#000000"
             android:textSize="30dp" />
-        <TextView android:id="@+id/info"
+        <TextView android:id="@+id/info0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#00008B"

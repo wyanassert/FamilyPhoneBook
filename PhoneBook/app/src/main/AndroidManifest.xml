@@ -19,7 +19,6 @@
             android:name=".AllCallLogActivity"
             android:label="@string/title_activity_all_call_log"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".MultipleItemsList"></activity>
     </application>
 
 </manifest>
