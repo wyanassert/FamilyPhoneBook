@@ -16,10 +16,25 @@ public class ContactModel {
     {
         this.name = "wyan";
         this.phonenumber = "13343450215";
-        this.fromCity = "";
-        this.weather = "";
+        this.weather = "sunny";
         this.address = "Wuhan";
         this.email = "1402099772@qq.com";
-        this.note = "";
+        this.note = "never say never";
+    }
+
+    public ContactModel(String name,
+            String phonenumber,
+            String fromCity,
+            String weather,
+            String address,
+            String email,
+            String note)
+    {
+        this.name = name;
+        this.phonenumber = phonenumber;
+        this.weather = fromCity;
+        this.address = address;
+        this.email = email;
+        this.note = note;
     }
 }

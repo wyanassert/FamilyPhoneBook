@@ -21,7 +21,10 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +42,7 @@ public class AllCallLogActivity extends Activity {
         setContentView(R.layout.call_log_contact);
         listView = (ListView)this.findViewById(R.id.listView);
         listString = new ArrayList<CallLogCellModel>();
-        for(int i = 0 ; i < 10 ; i++)
+        for(int i = 0 ; i < 50 ; i++)
         {
             listString.add(new CallLogCellModel(i));
         }
@@ -95,8 +98,8 @@ public class AllCallLogActivity extends Activity {
 
         public View getView(int position, View convertView, ViewGroup parent)
         {
+            ViewHolder0 holder0 = null;
             ViewHolder1 holder1 = null;
-            ViewHolder2 holder2 = null;
 
             int type = getItemViewType(position);
             if(convertView == null)
@@ -106,21 +109,24 @@ public class AllCallLogActivity extends Activity {
                 {
                     case TYPE_0:
                         convertView = inflater.inflate(R.layout.call_log_cell_contact, parent, false);
-                        holder1 = new ViewHolder1();
-                        holder1.textView = (TextView)convertView.findViewById(R.id.info0);
-                        holder1.imageView = (ImageView)convertView.findViewById(R.id.img0);
-                        holder1.title = (TextView)convertView.findViewById(R.id.title0);
-                        Log.e("convertView = ", "NULL TYPE_1");
-                        convertView.setTag(holder1);
+                        holder0 = new ViewHolder0();
+                        holder0.phoneNumber = (TextView)convertView.findViewById(R.id.cell_contact_phonenumber);
+                        holder0.imageView = (ImageView)convertView.findViewById(R.id.cell_contact_image);
+                        holder0.name = (TextView)convertView.findViewById(R.id.cell_contact_name);
+                        holder0.address = (TextView)convertView.findViewById(R.id.cell_contact_address);
+                        holder0.email = (TextView)convertView.findViewById(R.id.cell_contact_email);
+                        holder0.weather = (TextView)convertView.findViewById(R.id.cell_contact_weather);
+                        holder0.note = (TextView)convertView.findViewById(R.id.cell_contact_note);
+                        convertView.setTag(holder0);
                         break;
                     case TYPE_1:
                         convertView = inflater.inflate(R.layout.call_log_cell, parent, false);
-                        holder2 = new ViewHolder2();
-                        holder2.textView = (TextView)convertView.findViewById(R.id.info1);
-                        holder2.imageView = (ImageView)convertView.findViewById(R.id.img1);
-                        holder2.title = (TextView)convertView.findViewById(R.id.title1);
+                        holder1 = new ViewHolder1();
+                        holder1.callLength = (TextView)convertView.findViewById(R.id.cell_calllog_calllength);
+                        holder1.imageView = (ImageView)convertView.findViewById(R.id.cell_calllog_image);
+                        holder1.time = (TextView)convertView.findViewById(R.id.cell_calllog_time);
                         Log.e("convertView = ", "NULL TYPE_2");
-                        convertView.setTag(holder2);
+                        convertView.setTag(holder1);
                         break;
                 }
             }
@@ -129,10 +135,10 @@ public class AllCallLogActivity extends Activity {
                 switch(type)
                 {
                     case TYPE_0:
-                        holder1 = (ViewHolder1) convertView.getTag();
+                        holder0 = (ViewHolder0) convertView.getTag();
                         break;
                     case TYPE_1:
-                        holder2 = (ViewHolder2) convertView.getTag();
+                        holder1 = (ViewHolder1) convertView.getTag();
                         break;
                 }
             }
@@ -141,10 +147,10 @@ public class AllCallLogActivity extends Activity {
             {
 
                 case TYPE_0:
-                    holder1.fillData(contact);
+                    holder0.fillData(contact);
                     break;
                 case TYPE_1:
-                    holder2.fillData(listString.get(position - 1));
+                    holder1.fillData(listString.get(position - 1));
                     break;
             }
 
@@ -152,30 +158,71 @@ public class AllCallLogActivity extends Activity {
         }
     }
 
-    class ViewHolder1
+    class ViewHolder0
     {
-        TextView textView;
+        TextView phoneNumber;
         ImageView imageView;
-        TextView title;
+        TextView name;
+        TextView address;
+        TextView email;
+        TextView weather;
+        TextView note;
 
         public void fillData(ContactModel model)
         {
-            this.textView.setText(model.phonenumber);
+            this.phoneNumber.setText(model.phonenumber);
             this.imageView.setImageResource(R.drawable.image_contact_default);
-            this.title.setText(model.name);
+            this.name.setText(model.name);
+            this.address.setText(model.address);
+            this.email.setText(model.email);
+            this.note.setText(model.note);
+            this.weather.setText(model.weather);
         }
     }
-    class ViewHolder2
+    class ViewHolder1
     {
-        TextView textView;
+        TextView callLength;
         ImageView imageView;
-        TextView title;
+        TextView time;
 
         public void fillData(CallLogCellModel model)
         {
-            this.textView.setText(model.phoneNumber);
-            this.imageView.setImageResource(R.drawable.image_call);
-            this.title.setText(model.name);
+            Calendar calendar = model.callDate;
+            String year= String.valueOf(calendar.get(Calendar.YEAR));
+            String month= String.valueOf(calendar.get(Calendar.MONTH)+1);
+            String day= String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+            String hour = String.valueOf(calendar.get(Calendar.HOUR));
+            String minite = String.valueOf(calendar.get(Calendar.MINUTE));
+            String second = String.valueOf(calendar.get(Calendar.SECOND));
+            this.time.setText(year + "-" + month + "-" + day + "-" +  hour + "-" + minite + "-" + second);
+            String tmp = "time: ";
+            if(model.callLengthSecond > 3600 * 24)
+                tmp += "long long";
+            else
+            {
+                int tmpInt, length = model.callLengthSecond;
+                tmpInt = length / 3600;
+                if(tmpInt > 0)
+                    tmp += Integer.toString(tmpInt) + "h:";
+                length %= 3600;
+
+                tmpInt = length / 60;
+                if(tmpInt > 0)
+                    tmp += Integer.toString(tmpInt) + "m:";
+                length %= 60;
+
+                tmpInt = length;
+                tmp += Integer.toString(tmpInt) + "s";
+            }
+            this.callLength.setText(tmp);
+            if(!model.isHangUp && model.isCallIn)
+                this.imageView.setImageResource(R.drawable.image_callin_success);
+            else if(model.isHangUp && model.isCallIn)
+                this.imageView.setImageResource(R.drawable.image_callin_fail);
+            else if(!model.isHangUp && !model.isCallIn)
+                this.imageView.setImageResource(R.drawable.image_callout_success);
+            else
+                this.imageView.setImageResource(R.drawable.image_callout_fail);
         }
     }
 }

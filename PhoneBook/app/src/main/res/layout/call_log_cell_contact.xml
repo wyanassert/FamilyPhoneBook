@@ -1,30 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="200dp">
+    android:layout_height="150dp">
 
+    <LinearLayout android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView android:id="@+id/cell_contact_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:layout_margin="10dp"/>
 
-    <ImageView android:id="@+id/img0"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
-        android:scaleType="centerCrop"
-        android:layout_margin="10dp"/>
+        <LinearLayout android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <LinearLayout android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView android:id="@+id/cell_contact_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#00008B"
+                    android:textSize="15dp"
+                    android:layout_margin="3dp"/>
+                <TextView android:id="@+id/cell_contact_weather"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#00008B"
+                    android:textSize="15dp"
+                    android:layout_margin="3dp"/>
+            </LinearLayout>
 
-    <LinearLayout android:orientation="vertical"
+            <LinearLayout android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView android:id="@+id/cell_contact_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#00008B"
+                    android:textSize="15dp"
+                    android:layout_margin="3dp"/>
+                <TextView android:id="@+id/cell_contact_note"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#00008B"
+                    android:textSize="15dp"
+                    android:layout_margin="3dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <TextView android:id="@+id/title0"
+        <TextView android:id="@+id/cell_contact_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#000000"
-            android:textSize="30dp" />
-        <TextView android:id="@+id/info0"
+            android:textSize="20dp"
+            android:layout_margin="3dp"/>
+        <TextView android:id="@+id/cell_contact_phonenumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#00008B"
-            android:textSize="40dp" />
+            android:textSize="15dp"
+            android:layout_margin="3dp"/>
+
 
     </LinearLayout>
 
