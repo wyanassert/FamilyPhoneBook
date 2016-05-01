@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="150dp">
+    android:layout_height="wrap_content">
 
     <LinearLayout android:orientation="horizontal"
         android:layout_width="wrap_content"
@@ -39,15 +39,11 @@
                 <TextView android:id="@+id/cell_contact_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#00008B"
-                    android:textSize="15dp"
-                    android:layout_margin="3dp"/>
+                    />
                 <TextView android:id="@+id/cell_contact_note"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#00008B"
-                    android:textSize="15dp"
-                    android:layout_margin="3dp"/>
+                    />
             </LinearLayout>
 
         </LinearLayout>
@@ -70,8 +66,27 @@
             android:textColor="#00008B"
             android:textSize="15dp"
             android:layout_margin="3dp"/>
+    </LinearLayout>
 
-
+    <LinearLayout
+        android:id="@+id/cell_contact_botton_buttons"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+        <ImageButton
+            android:id="@+id/cell_contact_call_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"/>
+        <ImageButton
+            android:id="@+id/cell_contact_sms_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:scaleType="fitCenter"/>
     </LinearLayout>
 
 </LinearLayout>

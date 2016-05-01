@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -117,6 +118,8 @@ public class AllCallLogActivity extends Activity {
                         holder0.email = (TextView)convertView.findViewById(R.id.cell_contact_email);
                         holder0.weather = (TextView)convertView.findViewById(R.id.cell_contact_weather);
                         holder0.note = (TextView)convertView.findViewById(R.id.cell_contact_note);
+                        holder0.callButton = (ImageButton)convertView.findViewById(R.id.cell_contact_call_button);
+                        holder0.smsButton = (ImageButton)convertView.findViewById(R.id.cell_contact_sms_button);
                         convertView.setTag(holder0);
                         break;
                     case TYPE_1:
@@ -167,6 +170,8 @@ public class AllCallLogActivity extends Activity {
         TextView email;
         TextView weather;
         TextView note;
+        ImageButton callButton;
+        ImageButton smsButton;
 
         public void fillData(ContactModel model)
         {
@@ -177,6 +182,8 @@ public class AllCallLogActivity extends Activity {
             this.email.setText(model.email);
             this.note.setText(model.note);
             this.weather.setText(model.weather);
+            this.callButton.setImageResource(R.drawable.image_call);
+            this.smsButton.setImageResource(R.drawable.image_sms);
         }
     }
     class ViewHolder1
