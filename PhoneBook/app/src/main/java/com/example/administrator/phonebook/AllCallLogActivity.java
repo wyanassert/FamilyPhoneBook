@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -151,6 +152,7 @@ public class AllCallLogActivity extends Activity {
 
                 case TYPE_0:
                     holder0.fillData(contact);
+                    holder0.onButtonAction();
                     break;
                 case TYPE_1:
                     holder1.fillData(listString.get(position - 1));
@@ -184,6 +186,12 @@ public class AllCallLogActivity extends Activity {
             this.weather.setText(model.weather);
             this.callButton.setImageResource(R.drawable.image_call);
             this.smsButton.setImageResource(R.drawable.image_sms);
+        }
+
+        public void onButtonAction()
+        {
+            this.callButton.setOnClickListener(new lvButtonListener(this));
+            this.smsButton.setOnClickListener(new lvButtonListener(this));
         }
     }
     class ViewHolder1
@@ -230,6 +238,37 @@ public class AllCallLogActivity extends Activity {
                 this.imageView.setImageResource(R.drawable.image_callout_success);
             else
                 this.imageView.setImageResource(R.drawable.image_callout_fail);
+        }
+    }
+
+    class lvButtonListener implements View.OnClickListener
+    {
+        ViewHolder0 holder;
+
+        lvButtonListener(ViewHolder0 holder)
+        {
+            this.holder = holder;
+        }
+
+        @Override
+        public void onClick(View v)
+        {
+            int vid=v.getId();
+            if (vid == holder.callButton.getId())
+            {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_CALL);
+                intent.setData(Uri.parse("tel:" + contact.phonenumber));
+                startActivity(intent);
+            }
+            else if(vid == holder.smsButton.getId())
+            {
+                Intent tent = new Intent();
+                tent.setAction(Intent.ACTION_SENDTO);
+                tent.setData(Uri.parse("smsto:" + contact.phonenumber));
+                startActivity(tent);
+            }
+
         }
     }
 }

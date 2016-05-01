@@ -20,5 +20,5 @@
             android:label="@string/title_activity_all_call_log"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
-
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
 </manifest>
