@@ -14,8 +14,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,6 +28,7 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -34,9 +38,11 @@ import java.util.Map;
 public class AllCallLogActivity extends Activity {
 
     private ListView listView;
-    MyAdapter listAdapter;
-    ContactModel contact;
-    ArrayList <CallLogCellModel> listString;
+    private MyAdapter listAdapter;
+    private ContactModel contact;
+    private ArrayList <CallLogCellModel> listString;
+    boolean isEditMode;
+    private static HashMap<Integer, Boolean> isSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +50,9 @@ public class AllCallLogActivity extends Activity {
         setContentView(R.layout.call_log_contact);
         listView = (ListView)this.findViewById(R.id.listView);
         listString = new ArrayList<CallLogCellModel>();
+        isEditMode = false;
+        isSelected = new HashMap<Integer, Boolean>();
+
         for(int i = 0 ; i < 50 ; i++)
         {
             listString.add(new CallLogCellModel(i));
@@ -51,6 +60,32 @@ public class AllCallLogActivity extends Activity {
         contact = new ContactModel();
         listAdapter = new MyAdapter(this);
         listView.setAdapter(listAdapter);
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if(position == 0)
+                    return false;
+                isEditMode = true;
+                listAdapter.notifyDataSetChanged();
+                return true;
+            }
+        });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.e("ListView:", "Click:position:" + Integer.toString(position));
+                if(0 == position)
+                {
+                    // TODO: 16/5/1
+                    return;
+                }
+                if(!isEditMode)
+                    return;
+                ViewHolder1 holder = (ViewHolder1)view.getTag();
+                holder.checkBox.toggle();
+
+            }
+        });
     }
 
     class MyAdapter extends BaseAdapter
@@ -129,6 +164,7 @@ public class AllCallLogActivity extends Activity {
                         holder1.callLength = (TextView)convertView.findViewById(R.id.cell_calllog_calllength);
                         holder1.imageView = (ImageView)convertView.findViewById(R.id.cell_calllog_image);
                         holder1.time = (TextView)convertView.findViewById(R.id.cell_calllog_time);
+                        holder1.checkBox = (CheckBox)convertView.findViewById(R.id.cell_calllog_check);
                         Log.e("convertView = ", "NULL TYPE_2");
                         convertView.setTag(holder1);
                         break;
@@ -156,6 +192,7 @@ public class AllCallLogActivity extends Activity {
                     break;
                 case TYPE_1:
                     holder1.fillData(listString.get(position - 1));
+                    holder1.onCheckBoxToggle(position);
                     break;
             }
 
@@ -199,6 +236,7 @@ public class AllCallLogActivity extends Activity {
         TextView callLength;
         ImageView imageView;
         TextView time;
+        CheckBox checkBox;
 
         public void fillData(CallLogCellModel model)
         {
@@ -230,14 +268,30 @@ public class AllCallLogActivity extends Activity {
                 tmp += Integer.toString(tmpInt) + "s";
             }
             this.callLength.setText(tmp);
-            if(!model.isHangUp && model.isCallIn)
-                this.imageView.setImageResource(R.drawable.image_callin_success);
-            else if(model.isHangUp && model.isCallIn)
-                this.imageView.setImageResource(R.drawable.image_callin_fail);
-            else if(!model.isHangUp && !model.isCallIn)
-                this.imageView.setImageResource(R.drawable.image_callout_success);
+            if(!isEditMode)
+            {
+                this.imageView.setVisibility(View.VISIBLE);
+                this.checkBox.setVisibility(View.GONE);
+                if(!model.isHangUp && model.isCallIn)
+                    this.imageView.setImageResource(R.drawable.image_callin_success);
+                else if(model.isHangUp && model.isCallIn)
+                    this.imageView.setImageResource(R.drawable.image_callin_fail);
+                else if(!model.isHangUp && !model.isCallIn)
+                    this.imageView.setImageResource(R.drawable.image_callout_success);
+                else
+                    this.imageView.setImageResource(R.drawable.image_callout_fail);
+            }
             else
-                this.imageView.setImageResource(R.drawable.image_callout_fail);
+            {
+                this.imageView.setVisibility(View.GONE);
+                this.checkBox.setVisibility(View.VISIBLE);
+                Log.e("CheckBox id", Integer.toString(this.checkBox.getId()));
+            }
+        }
+
+        public void onCheckBoxToggle(int position)
+        {
+            this.checkBox.setOnCheckedChangeListener(new lvCheckBoxListener(this, position));
         }
     }
 
@@ -268,7 +322,24 @@ public class AllCallLogActivity extends Activity {
                 tent.setData(Uri.parse("smsto:" + contact.phonenumber));
                 startActivity(tent);
             }
+        }
+    }
 
+    class lvCheckBoxListener implements CompoundButton.OnCheckedChangeListener
+    {
+        ViewHolder1 holder;
+        int position;
+        lvCheckBoxListener(ViewHolder1 holder, int position)
+        {
+            this.holder = holder;
+            this.position = position;
+        }
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+        {
+            Log.e("CheckState", Boolean.toString(isChecked));
+            isSelected.put(this.position, isChecked);
+            Log.e(Integer.toString(position), Boolean.toString(isSelected.get(position)));
         }
     }
 }
