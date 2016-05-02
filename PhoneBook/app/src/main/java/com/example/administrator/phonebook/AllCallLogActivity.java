@@ -26,6 +26,10 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import org.w3c.dom.Text;
 
 import java.io.Console;
@@ -40,22 +44,27 @@ public class AllCallLogActivity extends Activity {
     private ListView listView;
     private MyAdapter listAdapter;
     private ContactModel contact;
-    private ArrayList <CallLogCellModel> listString;
+    private ArrayList<CallLogCellModel> listString;
     boolean isEditMode;
     private static HashMap<Integer, Boolean> isSelected;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.call_log_contact);
-        listView = (ListView)this.findViewById(R.id.listView);
+        listView = (ListView) this.findViewById(R.id.listView);
         listString = new ArrayList<CallLogCellModel>();
         isEditMode = false;
         isSelected = new HashMap<Integer, Boolean>();
 
-        for(int i = 0 ; i < 50 ; i++)
-        {
+        for (int i = 0; i < 50; i++) {
             listString.add(new CallLogCellModel(i));
+            isSelected.put(new Integer(i + 1), new Boolean(false));
         }
         contact = new ContactModel();
         listAdapter = new MyAdapter(this);
@@ -63,7 +72,7 @@ public class AllCallLogActivity extends Activity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                if(position == 0)
+                if (position == 0)
                     return false;
                 isEditMode = true;
                 listAdapter.notifyDataSetChanged();
@@ -74,22 +83,63 @@ public class AllCallLogActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.e("ListView:", "Click:position:" + Integer.toString(position));
-                if(0 == position)
-                {
+                if (0 == position) {
                     // TODO: 16/5/1
                     return;
                 }
-                if(!isEditMode)
+                if (!isEditMode)
                     return;
-                ViewHolder1 holder = (ViewHolder1)view.getTag();
+                ViewHolder1 holder = (ViewHolder1) view.getTag();
                 holder.checkBox.toggle();
 
             }
         });
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
-    class MyAdapter extends BaseAdapter
-    {
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "AllCallLog Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.example.administrator.phonebook/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "AllCallLog Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.example.administrator.phonebook/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
+    }
+
+    class MyAdapter extends BaseAdapter {
         Context mContext;
         LinearLayout linearLayout = null;
         LayoutInflater inflater;
@@ -99,81 +149,69 @@ public class AllCallLogActivity extends Activity {
         final int TYPE_0 = 0;
         final int TYPE_1 = 1;
 
-        public MyAdapter(Context context)
-        {
+        public MyAdapter(Context context) {
             mContext = context;
             inflater = LayoutInflater.from(mContext);
         }
 
-        public int getCount()
-        {
+        public int getCount() {
             return listString.size() + 1;
         }
 
-        public int getItemViewType(int position)
-        {
-            if(position == 0)
+        public int getItemViewType(int position) {
+            if (position == 0)
                 return TYPE_0;
             else
                 return TYPE_1;
         }
 
-        public int getViewTypeCount()
-        {
+        public int getViewTypeCount() {
             return VIEW_TYPE;
         }
 
-        public Object getItem(int arg0)
-        {
+        public Object getItem(int arg0) {
             return listString.get(arg0);
         }
 
-        public long getItemId(int position)
-        {
+        public long getItemId(int position) {
             return position;
         }
 
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
+        public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder0 holder0 = null;
             ViewHolder1 holder1 = null;
 
             int type = getItemViewType(position);
-            if(convertView == null)
-            {
+            if (convertView == null) {
                 Log.e("convertView=", "null");
-                switch(type)
-                {
+                switch (type) {
                     case TYPE_0:
                         convertView = inflater.inflate(R.layout.call_log_cell_contact, parent, false);
                         holder0 = new ViewHolder0();
-                        holder0.phoneNumber = (TextView)convertView.findViewById(R.id.cell_contact_phonenumber);
-                        holder0.imageView = (ImageView)convertView.findViewById(R.id.cell_contact_image);
-                        holder0.name = (TextView)convertView.findViewById(R.id.cell_contact_name);
-                        holder0.address = (TextView)convertView.findViewById(R.id.cell_contact_address);
-                        holder0.email = (TextView)convertView.findViewById(R.id.cell_contact_email);
-                        holder0.weather = (TextView)convertView.findViewById(R.id.cell_contact_weather);
-                        holder0.note = (TextView)convertView.findViewById(R.id.cell_contact_note);
-                        holder0.callButton = (ImageButton)convertView.findViewById(R.id.cell_contact_call_button);
-                        holder0.smsButton = (ImageButton)convertView.findViewById(R.id.cell_contact_sms_button);
+                        holder0.phoneNumber = (TextView) convertView.findViewById(R.id.cell_contact_phonenumber);
+                        holder0.imageView = (ImageView) convertView.findViewById(R.id.cell_contact_image);
+                        holder0.name = (TextView) convertView.findViewById(R.id.cell_contact_name);
+                        holder0.address = (TextView) convertView.findViewById(R.id.cell_contact_address);
+                        holder0.email = (TextView) convertView.findViewById(R.id.cell_contact_email);
+                        holder0.weather = (TextView) convertView.findViewById(R.id.cell_contact_weather);
+                        holder0.note = (TextView) convertView.findViewById(R.id.cell_contact_note);
+                        holder0.callButton = (ImageButton) convertView.findViewById(R.id.cell_contact_call_button);
+                        holder0.smsButton = (ImageButton) convertView.findViewById(R.id.cell_contact_sms_button);
                         convertView.setTag(holder0);
                         break;
                     case TYPE_1:
                         convertView = inflater.inflate(R.layout.call_log_cell, parent, false);
                         holder1 = new ViewHolder1();
-                        holder1.callLength = (TextView)convertView.findViewById(R.id.cell_calllog_calllength);
-                        holder1.imageView = (ImageView)convertView.findViewById(R.id.cell_calllog_image);
-                        holder1.time = (TextView)convertView.findViewById(R.id.cell_calllog_time);
-                        holder1.checkBox = (CheckBox)convertView.findViewById(R.id.cell_calllog_check);
+                        holder1.callLength = (TextView) convertView.findViewById(R.id.cell_calllog_calllength);
+                        holder1.imageView = (ImageView) convertView.findViewById(R.id.cell_calllog_image);
+                        holder1.time = (TextView) convertView.findViewById(R.id.cell_calllog_time);
+                        holder1.checkBox = (CheckBox) convertView.findViewById(R.id.cell_calllog_check);
                         Log.e("convertView = ", "NULL TYPE_2");
                         convertView.setTag(holder1);
                         break;
                 }
-            }
-            else
-            {
-                switch(type)
-                {
+            } else {
+                switch (type) {
                     case TYPE_0:
                         holder0 = (ViewHolder0) convertView.getTag();
                         break;
@@ -183,8 +221,7 @@ public class AllCallLogActivity extends Activity {
                 }
             }
 
-            switch (type)
-            {
+            switch (type) {
 
                 case TYPE_0:
                     holder0.fillData(contact);
@@ -200,8 +237,7 @@ public class AllCallLogActivity extends Activity {
         }
     }
 
-    class ViewHolder0
-    {
+    class ViewHolder0 {
         TextView phoneNumber;
         ImageView imageView;
         TextView name;
@@ -212,8 +248,7 @@ public class AllCallLogActivity extends Activity {
         ImageButton callButton;
         ImageButton smsButton;
 
-        public void fillData(ContactModel model)
-        {
+        public void fillData(ContactModel model) {
             this.phoneNumber.setText(model.phonenumber);
             this.imageView.setImageResource(R.drawable.image_contact_default);
             this.name.setText(model.name);
@@ -225,42 +260,39 @@ public class AllCallLogActivity extends Activity {
             this.smsButton.setImageResource(R.drawable.image_sms);
         }
 
-        public void onButtonAction()
-        {
+        public void onButtonAction() {
             this.callButton.setOnClickListener(new lvButtonListener(this));
             this.smsButton.setOnClickListener(new lvButtonListener(this));
         }
     }
-    class ViewHolder1
-    {
+
+    class ViewHolder1 {
         TextView callLength;
         ImageView imageView;
         TextView time;
         CheckBox checkBox;
 
-        public void fillData(CallLogCellModel model)
-        {
+        public void fillData(CallLogCellModel model) {
             Calendar calendar = model.callDate;
-            String year= String.valueOf(calendar.get(Calendar.YEAR));
-            String month= String.valueOf(calendar.get(Calendar.MONTH)+1);
-            String day= String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+            String year = String.valueOf(calendar.get(Calendar.YEAR));
+            String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
+            String day = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
             String hour = String.valueOf(calendar.get(Calendar.HOUR));
             String minite = String.valueOf(calendar.get(Calendar.MINUTE));
             String second = String.valueOf(calendar.get(Calendar.SECOND));
-            this.time.setText(year + "-" + month + "-" + day + "-" +  hour + "-" + minite + "-" + second);
+            this.time.setText(year + "-" + month + "-" + day + "-" + hour + "-" + minite + "-" + second);
             String tmp = "time: ";
-            if(model.callLengthSecond > 3600 * 24)
+            if (model.callLengthSecond > 3600 * 24)
                 tmp += "long long";
-            else
-            {
+            else {
                 int tmpInt, length = model.callLengthSecond;
                 tmpInt = length / 3600;
-                if(tmpInt > 0)
+                if (tmpInt > 0)
                     tmp += Integer.toString(tmpInt) + "h:";
                 length %= 3600;
 
                 tmpInt = length / 60;
-                if(tmpInt > 0)
+                if (tmpInt > 0)
                     tmp += Integer.toString(tmpInt) + "m:";
                 length %= 60;
 
@@ -268,55 +300,46 @@ public class AllCallLogActivity extends Activity {
                 tmp += Integer.toString(tmpInt) + "s";
             }
             this.callLength.setText(tmp);
-            if(!isEditMode)
-            {
+            if (!isEditMode) {
                 this.imageView.setVisibility(View.VISIBLE);
                 this.checkBox.setVisibility(View.GONE);
-                if(!model.isHangUp && model.isCallIn)
+                if (!model.isHangUp && model.isCallIn)
                     this.imageView.setImageResource(R.drawable.image_callin_success);
-                else if(model.isHangUp && model.isCallIn)
+                else if (model.isHangUp && model.isCallIn)
                     this.imageView.setImageResource(R.drawable.image_callin_fail);
-                else if(!model.isHangUp && !model.isCallIn)
+                else if (!model.isHangUp && !model.isCallIn)
                     this.imageView.setImageResource(R.drawable.image_callout_success);
                 else
                     this.imageView.setImageResource(R.drawable.image_callout_fail);
-            }
-            else
-            {
+            } else {
                 this.imageView.setVisibility(View.GONE);
                 this.checkBox.setVisibility(View.VISIBLE);
-                Log.e("CheckBox id", Integer.toString(this.checkBox.getId()));
             }
         }
 
-        public void onCheckBoxToggle(int position)
-        {
+        public void onCheckBoxToggle(int position) {
             this.checkBox.setOnCheckedChangeListener(new lvCheckBoxListener(this, position));
+            this.checkBox.setChecked(isSelected.get(position));
+//            Log.e("Boolean", Boolean.toString(tmpBoolean));
         }
     }
 
-    class lvButtonListener implements View.OnClickListener
-    {
+    class lvButtonListener implements View.OnClickListener {
         ViewHolder0 holder;
 
-        lvButtonListener(ViewHolder0 holder)
-        {
+        lvButtonListener(ViewHolder0 holder) {
             this.holder = holder;
         }
 
         @Override
-        public void onClick(View v)
-        {
-            int vid=v.getId();
-            if (vid == holder.callButton.getId())
-            {
+        public void onClick(View v) {
+            int vid = v.getId();
+            if (vid == holder.callButton.getId()) {
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_CALL);
                 intent.setData(Uri.parse("tel:" + contact.phonenumber));
                 startActivity(intent);
-            }
-            else if(vid == holder.smsButton.getId())
-            {
+            } else if (vid == holder.smsButton.getId()) {
                 Intent tent = new Intent();
                 tent.setAction(Intent.ACTION_SENDTO);
                 tent.setData(Uri.parse("smsto:" + contact.phonenumber));
@@ -325,18 +348,17 @@ public class AllCallLogActivity extends Activity {
         }
     }
 
-    class lvCheckBoxListener implements CompoundButton.OnCheckedChangeListener
-    {
+    class lvCheckBoxListener implements CompoundButton.OnCheckedChangeListener {
         ViewHolder1 holder;
         int position;
-        lvCheckBoxListener(ViewHolder1 holder, int position)
-        {
+
+        lvCheckBoxListener(ViewHolder1 holder, int position) {
             this.holder = holder;
             this.position = position;
         }
+
         @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-        {
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             Log.e("CheckState", Boolean.toString(isChecked));
             isSelected.put(this.position, isChecked);
             Log.e(Integer.toString(position), Boolean.toString(isSelected.get(position)));
