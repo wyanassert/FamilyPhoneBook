@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +19,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
@@ -42,6 +46,9 @@ import java.util.Map;
 public class AllCallLogActivity extends Activity {
 
     private ListView listView;
+    private CheckBox allSelectedCheckBox;
+    private Button cancelButton;
+    private Button deleteButton;
     private MyAdapter listAdapter;
     private ContactModel contact;
     private ArrayList<CallLogCellModel> listString;
@@ -57,16 +64,20 @@ public class AllCallLogActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.call_log_contact);
-        listView = (ListView) this.findViewById(R.id.listView);
+        listView = (ListView) this.findViewById(R.id.calllog_listView);
+        allSelectedCheckBox = (CheckBox)this.findViewById(R.id.calllog_allselect_check);
+        cancelButton = (Button) this.findViewById(R.id.calllog_cancel_button);
+        deleteButton = (Button) this.findViewById(R.id.calllog_delete_button);
         listString = new ArrayList<CallLogCellModel>();
         isEditMode = false;
         isSelected = new HashMap<Integer, Boolean>();
 
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 20; i++) {
             listString.add(new CallLogCellModel(i));
-            isSelected.put(new Integer(i + 1), new Boolean(false));
         }
         contact = new ContactModel();
+
+        resetIsSelect(false);
         listAdapter = new MyAdapter(this);
         listView.setAdapter(listAdapter);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -74,8 +85,9 @@ public class AllCallLogActivity extends Activity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0)
                     return false;
-                isEditMode = true;
-                listAdapter.notifyDataSetChanged();
+                if(!isEditMode)
+                    transIntoEditMode();
+
                 return true;
             }
         });
@@ -92,6 +104,36 @@ public class AllCallLogActivity extends Activity {
                 ViewHolder1 holder = (ViewHolder1) view.getTag();
                 holder.checkBox.toggle();
 
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("Cancel", "Clicked");
+                resetIsSelect(false);
+                transOutOfEditMode();
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for(int i = listString.size() - 1; i >= 0; i --)
+                {
+                    if(isSelected.get(i  + (isEditMode ? 1 : 0)))
+                    {
+                        listString.remove(i);
+                    }
+                }
+                resetIsSelect(false);
+                transOutOfEditMode();
+            }
+        });
+        allSelectedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                resetIsSelect(isChecked);
+                listAdapter.notifyDataSetChanged();
             }
         });
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -139,6 +181,31 @@ public class AllCallLogActivity extends Activity {
         client.disconnect();
     }
 
+    private void transIntoEditMode()
+    {
+        isEditMode = true;
+        RelativeLayout layout = (RelativeLayout)findViewById(R.id.calllog_top_layout);
+        Resources resources = getApplicationContext().getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = 60 * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        layout.getLayoutParams().height = (int) px;
+        listAdapter.notifyDataSetChanged();
+    }
+
+    private void transOutOfEditMode()
+    {
+        isEditMode = false;
+        RelativeLayout layout = (RelativeLayout)findViewById(R.id.calllog_top_layout);
+        layout.getLayoutParams().height = 0;
+        listAdapter.notifyDataSetChanged();
+    }
+
+    private void resetIsSelect(boolean boolValue)
+    {
+        for(int i = 0; i < listString.size(); i++)
+            isSelected.put(new Integer(i + 1), new Boolean(boolValue));
+    }
+
     class MyAdapter extends BaseAdapter {
         Context mContext;
         LinearLayout linearLayout = null;
@@ -155,11 +222,11 @@ public class AllCallLogActivity extends Activity {
         }
 
         public int getCount() {
-            return listString.size() + 1;
+            return listString.size() + (isEditMode ? 0 : 1);
         }
 
         public int getItemViewType(int position) {
-            if (position == 0)
+            if (position == 0 && !isEditMode)
                 return TYPE_0;
             else
                 return TYPE_1;
@@ -228,7 +295,7 @@ public class AllCallLogActivity extends Activity {
                     holder0.onButtonAction();
                     break;
                 case TYPE_1:
-                    holder1.fillData(listString.get(position - 1));
+                    holder1.fillData(listString.get(position - (isEditMode ? 0 : 1)));
                     holder1.onCheckBoxToggle(position);
                     break;
             }
@@ -299,7 +366,7 @@ public class AllCallLogActivity extends Activity {
                 tmpInt = length;
                 tmp += Integer.toString(tmpInt) + "s";
             }
-            this.callLength.setText(tmp);
+            this.callLength.setText(model.name + tmp);
             if (!isEditMode) {
                 this.imageView.setVisibility(View.VISIBLE);
                 this.checkBox.setVisibility(View.GONE);
@@ -319,7 +386,7 @@ public class AllCallLogActivity extends Activity {
 
         public void onCheckBoxToggle(int position) {
             this.checkBox.setOnCheckedChangeListener(new lvCheckBoxListener(this, position));
-            this.checkBox.setChecked(isSelected.get(position));
+            this.checkBox.setChecked(isSelected.get(position + (isEditMode ? 1 : 0)));
 //            Log.e("Boolean", Boolean.toString(tmpBoolean));
         }
     }
@@ -360,8 +427,7 @@ public class AllCallLogActivity extends Activity {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             Log.e("CheckState", Boolean.toString(isChecked));
-            isSelected.put(this.position, isChecked);
-            Log.e(Integer.toString(position), Boolean.toString(isSelected.get(position)));
+            isSelected.put(this.position +  (isEditMode ? 1 : 0), isChecked);
         }
     }
 }

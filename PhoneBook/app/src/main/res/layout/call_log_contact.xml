@@ -1,10 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <ListView android:id="@+id/listView"
+    <RelativeLayout android:id="@+id/calllog_top_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp">
+
+        <CheckBox android:id="@+id/calllog_allselect_check"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="10dp"/>
+
+        <Button android:id="@+id/calllog_delete_button"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:text="Delete"
+            android:layout_alignParentRight="true"
+            android:layout_margin="10dp"/>
+
+        <Button android:id="@+id/calllog_cancel_button"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:text="Cancel"
+            android:layout_toLeftOf="@+id/calllog_delete_button"
+            android:layout_margin="10dp"/>
+    </RelativeLayout>
+
+    <ListView android:id="@+id/calllog_listView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
