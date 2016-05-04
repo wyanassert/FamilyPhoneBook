@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -30,6 +32,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBtnPeople.setOnClickListener(this);
 
         setDefaultFragment();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // 为ActionBar扩展菜单项
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_actions, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     private void setDefaultFragment() {
