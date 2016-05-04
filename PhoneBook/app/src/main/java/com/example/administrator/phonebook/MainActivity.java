@@ -1,6 +1,7 @@
 package com.example.administrator.phonebook;
 
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -14,6 +15,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private CallingFragment mCalling;
     private PeopleFragment mPeople;
+
+    public final static String EXTRA_MESSAGE = "com.mycompany.myfirstapp.MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,16 +44,34 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         FragmentTransaction transaction =  getSupportFragmentManager().beginTransaction();
         switch (v.getId()) {
             case R.id.btn_calling:
-                if (mCalling == null)
-                    mCalling = new CallingFragment();
-                transaction.replace(R.id.id_frame, mCalling);
+//                if (mCalling == null)
+//                    mCalling = new CallingFragment();
+//                transaction.replace(R.id.id_frame, mCalling);
+                jumpToCallLog();
                 break;
             case R.id.btn_people:
-                if (mPeople == null)
-                    mPeople = new PeopleFragment();
-                transaction.replace(R.id.id_frame, mPeople);
+//                if (mPeople == null)
+//                    mPeople = new PeopleFragment();
+//                transaction.replace(R.id.id_frame, mPeople);
+                jumpToBlackList();
                 break;
         }
         transaction.commit();
     }
+
+    private void jumpToCallLog() {
+        Intent intent = new Intent(this, AllCallLogActivity.class);
+        String message = "test";
+        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
+    }
+
+    private void jumpToBlackList() {
+        Intent intent = new Intent(this, BlackListActivity.class);
+        String message = "test";
+        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
+    }
 }
+
+
