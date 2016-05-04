@@ -208,9 +208,7 @@ public class AllCallLogActivity extends Activity {
 
     class MyAdapter extends BaseAdapter {
         Context mContext;
-        LinearLayout linearLayout = null;
         LayoutInflater inflater;
-        TextView text;
 
         final int VIEW_TYPE = 2;
         final int TYPE_0 = 0;

@@ -1,8 +1,10 @@
 package com.example.administrator.phonebook;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -14,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -21,9 +24,11 @@ import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.BooleanResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class BlackListActivity extends AppCompatActivity {
     private ListView listView;
@@ -33,6 +38,7 @@ public class BlackListActivity extends AppCompatActivity {
     private ArrayList<BlackListModel> modelArray;
     private MyAdapter listAdapter;
     boolean isEditMode;
+    static HashMap<Integer, Boolean> isSelected;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -47,8 +53,10 @@ public class BlackListActivity extends AppCompatActivity {
 
         modelArray = new ArrayList<BlackListModel>();
         for (int i = 0; i < 20; i++) {
-            modelArray.add(new BlackListModel());
+            modelArray.add(new BlackListModel(i));
         }
+        isSelected = new HashMap<>();
+        resetIsSelect(false);
         listView = (ListView) this.findViewById(R.id.blacklist_listView);
         listAdapter = new MyAdapter(this);
         listView.setAdapter(listAdapter);
@@ -79,6 +87,7 @@ public class BlackListActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                resetIsSelect(false);
                 transOutOfEditMode();
             }
         });
@@ -86,7 +95,23 @@ public class BlackListActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                for(int i = modelArray.size() - 1; i >= 0; i --)
+                {
+                    if(isSelected.get(i))
+                    {
+                        modelArray.remove(i);
+                    }
+                }
+                resetIsSelect(false);
                 transOutOfEditMode();
+            }
+        });
+
+        allSelectCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                resetIsSelect(isChecked);
+                listAdapter.notifyDataSetChanged();
             }
         });
 
@@ -139,6 +164,12 @@ public class BlackListActivity extends AppCompatActivity {
         RelativeLayout layout = (RelativeLayout)findViewById(R.id.blacklist_top_layout);
         layout.getLayoutParams().height = 0;
         listAdapter.notifyDataSetChanged();
+    }
+
+    private void resetIsSelect(boolean boolValue)
+    {
+        for(int i = 0; i < modelArray.size(); i++)
+            isSelected.put(i, boolValue);
     }
 
     class MyAdapter extends BaseAdapter {
@@ -202,7 +233,8 @@ public class BlackListActivity extends AppCompatActivity {
             switch (type) {
 
                 case TYPE_0:
-                    holder0.fillData(modelArray.get(position));
+                    holder0.checkBox.setOnCheckedChangeListener(null);
+                    holder0.fillData(modelArray.get(position), position);
                     break;
 
             }
@@ -216,10 +248,39 @@ public class BlackListActivity extends AppCompatActivity {
         TextView note;
         CheckBox checkBox;
 
-        public void fillData(BlackListModel model)
+        public void fillData(BlackListModel model, int position)
         {
             phoneNumber.setText(model.phoneNumber);
             note.setText(model.note);
+            if(isEditMode)
+            {
+                checkBox.setVisibility(View.VISIBLE);
+                checkBox.setChecked(isSelected.get(position));
+                Log.e(Integer.toString(position), Boolean.toString(isSelected.get(position)));
+                checkBox.setOnCheckedChangeListener(new lvCheckBoxListener(this, position));
+            }
+            else
+            {
+                checkBox.setVisibility(View.INVISIBLE);
+            }
+
         }
     }
+
+    class lvCheckBoxListener implements CompoundButton.OnCheckedChangeListener {
+        ViewHolder0 holder;
+        int position;
+
+        lvCheckBoxListener(ViewHolder0 holder, int position) {
+            this.holder = holder;
+            this.position = position;
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            Log.e("CheckState", Boolean.toString(isChecked));
+            isSelected.put(this.position, isChecked);
+        }
+    }
+
 }
