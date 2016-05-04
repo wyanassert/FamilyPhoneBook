@@ -50,9 +50,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 jumpToCallLog();
                 break;
             case R.id.btn_people:
-                if (mPeople == null)
-                    mPeople = new PeopleFragment();
-                transaction.replace(R.id.id_frame, mPeople);
+//                if (mPeople == null)
+//                    mPeople = new PeopleFragment();
+//                transaction.replace(R.id.id_frame, mPeople);
+                jumpToBlackList();
                 break;
         }
         transaction.commit();
@@ -60,6 +61,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private void jumpToCallLog() {
         Intent intent = new Intent(this, AllCallLogActivity.class);
+        String message = "test";
+        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
+    }
+
+    private void jumpToBlackList() {
+        Intent intent = new Intent(this, BlackListActivity.class);
         String message = "test";
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
