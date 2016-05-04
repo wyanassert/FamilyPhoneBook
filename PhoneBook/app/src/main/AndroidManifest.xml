@@ -19,8 +19,7 @@
         </activity>
         <activity
             android:name=".AllCallLogActivity"
-            android:label="@string/title_activity_all_call_log"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/title_activity_all_call_log" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.

@@ -43,7 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AllCallLogActivity extends Activity {
+public class AllCallLogActivity extends AppCompatActivity {
 
     private ListView listView;
     private CheckBox allSelectedCheckBox;
