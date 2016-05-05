@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private Button mBtnCalling;
@@ -40,6 +43,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity_actions, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_edit:
+                Toast.makeText(this, "edit", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_add:
+                Toast.makeText(this, "add", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_blacklist:
+                Toast.makeText(this, "blacklist", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_delete:
+                Toast.makeText(this, "delete", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_export:
+                Toast.makeText(this, "export", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_about:
+                Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void setDefaultFragment() {
