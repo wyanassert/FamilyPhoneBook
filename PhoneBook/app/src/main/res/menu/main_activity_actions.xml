@@ -17,8 +17,6 @@
         android:title="黑名单"
         app:showAsAction="never"/>
 
-    <item android:id="@+id/action_delete"
-        android:title="删除"
         app:showAsAction="never"/>
 
     <item android:id="@+id/action_export"
