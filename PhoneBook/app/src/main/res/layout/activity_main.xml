@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="com.example.administrator.phonebook.MainActivity">
 
-    <android.support.v4.view.ViewPager
+    <com.example.administrator.phonebook.CustomViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pager"
         android:layout_width="match_parent"
