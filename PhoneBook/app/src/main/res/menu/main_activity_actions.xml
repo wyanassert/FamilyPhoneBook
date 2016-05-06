@@ -3,7 +3,8 @@
     <item android:id="@+id/action_search"
         android:icon="@drawable/image_search"
         android:title="search"
-        app:showAsAction="always"  />
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
 
     <item android:id="@+id/action_edit"
         android:title="编辑"

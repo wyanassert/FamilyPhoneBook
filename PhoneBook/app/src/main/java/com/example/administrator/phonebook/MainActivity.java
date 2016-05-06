@@ -76,22 +76,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_edit:
-                Toast.makeText(this, "edit", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_add:
-                Toast.makeText(this, "add", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_blacklist:
-                jumpToBlackList();
-                Toast.makeText(this, "blacklist", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_export:
-                Toast.makeText(this, "export", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_about:
-                Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
-                return true;
+//            case R.id.action_edit:
+//                Toast.makeText(this, "edit", Toast.LENGTH_SHORT).show();
+//                return true;
+//            case R.id.action_add:
+//                Toast.makeText(this, "add", Toast.LENGTH_SHORT).show();
+//                return true;
+//            case R.id.action_blacklist:
+//                jumpToBlackList();
+//                Toast.makeText(this, "blacklist", Toast.LENGTH_SHORT).show();
+//                return true;
+//            case R.id.action_export:
+//                Toast.makeText(this, "export", Toast.LENGTH_SHORT).show();
+//                return true;
+//            case R.id.action_about:
+//                Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
+//                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
