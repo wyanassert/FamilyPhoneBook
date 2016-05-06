@@ -5,11 +5,13 @@
     tools:context="com.example.administrator.phonebook.CallingFragment">
 
     <!-- TODO: Update blank fragment layout -->
+    <!--<com.baoyz.swipemenulistview.SwipeMenuListView-->
+        <!--android:id="@+id/listView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="calling"
-        android:textSize="50dp"
-        android:textAlignment="center"/>
+        android:id="@+id/text1"/>
 
 </FrameLayout>
