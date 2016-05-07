@@ -4,6 +4,31 @@
     android:layout_height="match_parent"
     tools:context="com.example.administrator.phonebook.CallingFragment">
 
+    <RelativeLayout android:id="@+id/main_calllog_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+        <CheckBox android:id="@+id/main_calllog_allselect_check"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="10dp"/>
+
+        <Button android:id="@+id/main_calllog_delete_button"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:text="Delete"
+            android:layout_alignParentRight="true"
+            android:layout_margin="10dp"/>
+
+        <Button android:id="@+id/main_calllog_cancel_button"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:text="Cancel"
+            android:layout_toLeftOf="@+id/main_calllog_delete_button"
+            android:layout_margin="10dp"/>
+    </RelativeLayout>
+
     <!-- TODO: Update blank fragment layout -->
     <!--<com.baoyz.swipemenulistview.SwipeMenuListView-->
         <!--android:id="@+id/listView"-->

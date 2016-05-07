@@ -2,6 +2,7 @@ package com.example.administrator.phonebook;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -21,9 +23,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -151,6 +155,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         private SwipeMenuListView callinglogListView;
         private ArrayList<CallLogCellModel> listCalllinglog;
         AppAdapter mAdapter;
+        boolean isCallingLogInEditMode;
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             // The last two arguments ensure LayoutParams are inflated
@@ -206,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             callinglogListView.setMenuCreator(creator);
             mAdapter = new AppAdapter(getActivity());
+            isCallingLogInEditMode = false;
             callinglogListView.setAdapter(mAdapter);
             callinglogListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
                 @Override
@@ -228,6 +235,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     return false;
                 }
             });
+
+            callinglogListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    Log.e("Long Prress", "Did Click");
+                    transIntoEditMode();
+                    return true;
+                }
+            });
+
+            callinglogListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Log.e("Click", "Did Click");
+                }
+            });
+        }
+
+        private void transIntoEditMode()
+        {
+            isCallingLogInEditMode = true;
+            RelativeLayout layout = (RelativeLayout)findViewById(R.id.main_calllog_top_layout);
+            Resources resources = getApplicationContext().getResources();
+            DisplayMetrics metrics = resources.getDisplayMetrics();
+            float px = 60 * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+            layout.getLayoutParams().height = (int) px;
+            mAdapter.notifyDataSetChanged();
+        }
+
+        private void transOutOfEditMode()
+        {
+            isCallingLogInEditMode = false;
+            RelativeLayout layout = (RelativeLayout)findViewById(R.id.main_calllog_top_layout);
+            layout.getLayoutParams().height = 0;
+            mAdapter.notifyDataSetChanged();
         }
 
         class AppAdapter extends BaseAdapter {
@@ -295,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 switch (type) {
 
                     case 0:
-                        holder0.fillData(listCalllinglog.get(position));
+                        holder0.fillData(listCalllinglog.get(position), isCallingLogInEditMode);
                         break;
 
                 }
@@ -325,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TextView time;
         CheckBox checkBox;
 
-        public void fillData(CallLogCellModel model) {
+        public void fillData(CallLogCellModel model, boolean isEditMode) {
             Calendar calendar = model.callDate;
             String year = String.valueOf(calendar.get(Calendar.YEAR));
             String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
@@ -353,21 +395,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tmp += Integer.toString(tmpInt) + "s";
             }
             this.callLength.setText(model.name + tmp);
-//            if (!isEditMode) {
-//                this.imageView.setVisibility(View.VISIBLE);
-//                this.checkBox.setVisibility(View.GONE);
-//                if (!model.isHangUp && model.isCallIn)
-//                    this.imageView.setImageResource(R.drawable.image_callin_success);
-//                else if (model.isHangUp && model.isCallIn)
-//                    this.imageView.setImageResource(R.drawable.image_callin_fail);
-//                else if (!model.isHangUp && !model.isCallIn)
-//                    this.imageView.setImageResource(R.drawable.image_callout_success);
-//                else
-//                    this.imageView.setImageResource(R.drawable.image_callout_fail);
-//            } else {
-//                this.imageView.setVisibility(View.GONE);
-//                this.checkBox.setVisibility(View.VISIBLE);
-//            }
+            if (!isEditMode) {
+                this.imageView.setVisibility(View.VISIBLE);
+                this.checkBox.setVisibility(View.GONE);
+                if (!model.isHangUp && model.isCallIn)
+                    this.imageView.setImageResource(R.drawable.image_callin_success);
+                else if (model.isHangUp && model.isCallIn)
+                    this.imageView.setImageResource(R.drawable.image_callin_fail);
+                else if (!model.isHangUp && !model.isCallIn)
+                    this.imageView.setImageResource(R.drawable.image_callout_success);
+                else
+                    this.imageView.setImageResource(R.drawable.image_callout_fail);
+            } else {
+                this.imageView.setVisibility(View.GONE);
+                this.checkBox.setVisibility(View.VISIBLE);
+            }
         }
     }
 
