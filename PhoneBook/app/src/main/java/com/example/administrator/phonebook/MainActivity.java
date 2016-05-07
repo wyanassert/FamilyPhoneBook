@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.StrictMode;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -21,7 +21,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -83,6 +82,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // 为ActionBar扩展菜单项
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_actions, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_edit:
+                Toast.makeText(this, "edit", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_add:
+                Toast.makeText(this, "add", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_blacklist:
+                jumpToBlackList();
+                Toast.makeText(this, "blacklist", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_export:
+                Toast.makeText(this, "export", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_about:
+                Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
 
     public class PhoneBookFragmentPageAdapter extends FragmentPagerAdapter {
         public PhoneBookFragmentPageAdapter(FragmentManager fragmentManager) {
@@ -120,9 +157,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // properly.
             Bundle args = getArguments();
             int type = args.getInt(ARG_OBJECT);
-//            View rootView = inflater.inflate(R.layout.fragment_calling, container, false);
-//            ((TextView) rootView.findViewById(R.id.text1)).setText(
-//                    Integer.toString(type));
             if(0 == type)
             {
                 View rootView = inflater.inflate(R.layout.fragment_calling, container, false);
@@ -147,35 +181,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 @Override
                 public void create(SwipeMenu menu) {
-                    // create "open" item
-                    SwipeMenuItem openItem = new SwipeMenuItem(
-                            getActivity());
-                    // set item background
-                    openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9,
-                            0xCE)));
-                    // set item width
-                    openItem.setWidth(dp2px(90));
-                    // set item title
-                    openItem.setTitle("Open");
-                    // set item title fontsize
-                    openItem.setTitleSize(18);
-                    // set item title font color
-                    openItem.setTitleColor(Color.WHITE);
-                    // add to menu
-                    menu.addMenuItem(openItem);
+                    SwipeMenuItem smsItem = new SwipeMenuItem(getActivity());
+                    smsItem.setBackground(new ColorDrawable(Color.rgb(128, 175, 255)));
+                    smsItem.setWidth(dp2px(90));
+                    smsItem.setIcon(R.drawable.image_sms);
+                    menu.addMenuItem(smsItem);
 
-                    // create "delete" item
-                    SwipeMenuItem deleteItem = new SwipeMenuItem(
-                            getActivity());
-                    // set item background
-                    deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
-                            0x3F, 0x25)));
-                    // set item width
-                    deleteItem.setWidth(dp2px(90));
-                    // set a icon
-                    deleteItem.setIcon(R.drawable.image_call);
-                    // add to menu
-                    menu.addMenuItem(deleteItem);
+                    SwipeMenuItem callItem = new SwipeMenuItem(getActivity());
+                    callItem.setBackground(new ColorDrawable(Color.rgb(160, 102, 182)));
+                    callItem.setWidth(dp2px(90));
+                    callItem.setIcon(R.drawable.image_call);
+                    menu.addMenuItem(callItem);
+                }
+
+                private int dp2px(int dp) {
+                    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                            getResources().getDisplayMetrics());
                 }
             };
             callinglogListView = (SwipeMenuListView)getView().findViewById(R.id.main_calllog_listView);
@@ -186,6 +207,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             callinglogListView.setMenuCreator(creator);
             mAdapter = new AppAdapter(getActivity());
             callinglogListView.setAdapter(mAdapter);
+            callinglogListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                    switch (index) {
+                        case 0:
+                            Intent tent = new Intent();
+                            tent.setAction(Intent.ACTION_SENDTO);
+                            tent.setData(Uri.parse("smsto:" + "13343450215"));
+                            startActivity(tent);
+                            break;
+                        case 1:
+                            Intent intent = new Intent();
+                            intent.setAction(Intent.ACTION_CALL);
+                            intent.setData(Uri.parse("tel:" + "13343450215"));
+                            startActivity(intent);
+                            break;
+                    }
+                    // false : close the menu; true : not close the menu
+                    return false;
+                }
+            });
         }
 
         class AppAdapter extends BaseAdapter {
@@ -261,49 +303,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return convertView;
             }
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // 为ActionBar扩展菜单项
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_activity_actions, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_edit:
-                Toast.makeText(this, "edit", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_add:
-                Toast.makeText(this, "add", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_blacklist:
-                jumpToBlackList();
-                Toast.makeText(this, "blacklist", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_export:
-                Toast.makeText(this, "export", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_about:
-                Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-
-    }
-
-    private int dp2px(int dp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
-                getResources().getDisplayMetrics());
     }
 
     private void jumpToCallLog() {
