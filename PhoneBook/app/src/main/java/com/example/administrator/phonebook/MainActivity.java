@@ -12,7 +12,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ButtonBarLayout;
 import android.util.DisplayMetrics;
@@ -25,11 +27,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,9 +50,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
     public final static String EXTRA_MESSAGE = "com.mycompany.myfirstapp.MESSAGE";
+
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+
     PhoneBookFragmentPageAdapter mFragmentPageAdapter;
     CustomViewPager mViewPager;
     private ArrayList<CallLogCellModel> listCalllinglog;
@@ -65,6 +74,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        String [] mPlanetTitles = {"黑名单", "皮肤","语言","导入/导出", "关于"};
+        ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, mPlanetTitles);
+        mDrawerList.setAdapter(adapter);
 
         mFragmentPageAdapter = new PhoneBookFragmentPageAdapter(getSupportFragmentManager());
         mViewPager = (CustomViewPager) findViewById(R.id.pager);
