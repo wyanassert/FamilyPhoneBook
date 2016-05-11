@@ -1,12 +1,12 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.administrator.phonebook.CallingFragment">
+    android:orientation="vertical">
 
     <RelativeLayout android:id="@+id/main_calllog_top_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp">
+        android:layout_height="60dp">
 
         <CheckBox android:id="@+id/main_calllog_allselect_check"
             android:layout_width="60dp"
@@ -29,14 +29,10 @@
             android:layout_margin="10dp"/>
     </RelativeLayout>
 
-    <!-- TODO: Update blank fragment layout -->
-    <!--<com.baoyz.swipemenulistview.SwipeMenuListView-->
-        <!--android:id="@+id/listView"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
     <com.baoyz.swipemenulistview.SwipeMenuListView
         android:id="@+id/main_calllog_listView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        />
 
-</FrameLayout>
+</LinearLayout>

@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ButtonBarLayout;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -35,15 +37,28 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     public final static String EXTRA_MESSAGE = "com.mycompany.myfirstapp.MESSAGE";
     PhoneBookFragmentPageAdapter mFragmentPageAdapter;
     CustomViewPager mViewPager;
+    private ArrayList<CallLogCellModel> listCalllinglog;
+
+    static HashMap<Integer, Boolean> callSelectArray;
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
 
     @Override
@@ -84,6 +99,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bar.addTab(bar.newTab().setText("通话记录").setTabListener(tabListener));
         bar.addTab(bar.newTab().setText("联系人").setTabListener(tabListener));
 
+        callSelectArray =  new HashMap<>();
+        listCalllinglog = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            listCalllinglog.add(new CallLogCellModel(i));
+        }
+        for(int i = 0; i < listCalllinglog.size(); i++)
+            callSelectArray.put(i, false);
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -124,6 +150,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.example.administrator.phonebook/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.example.administrator.phonebook/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
+    }
+
 
     public class PhoneBookFragmentPageAdapter extends FragmentPagerAdapter {
         public PhoneBookFragmentPageAdapter(FragmentManager fragmentManager) {
@@ -153,9 +219,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public class ObjectFragment extends Fragment {
         public static final String ARG_OBJECT = "object";
         private SwipeMenuListView callinglogListView;
-        private ArrayList<CallLogCellModel> listCalllinglog;
+
         AppAdapter mAdapter;
         boolean isCallingLogInEditMode;
+        Button callCancelButton;
+        Button callDeleteButton;
+        CheckBox callAllSelectCheckBox;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -163,14 +232,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // properly.
             Bundle args = getArguments();
             int type = args.getInt(ARG_OBJECT);
-            if(0 == type)
-            {
+            if (0 == type) {
                 View rootView = inflater.inflate(R.layout.fragment_calling, container, false);
-
                 return rootView;
-            }
-            else if(1 == type)
-            {
+            } else if (1 == type) {
 
             }
             View rootView = inflater.inflate(R.layout.fragment_calling, container, false);
@@ -179,8 +244,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         public void onActivityCreated(Bundle savedInstanceState) {
             super.onActivityCreated(savedInstanceState);
-            Log.v("ListFragment", "onActivityCreated().");
-            Log.v("ListsavedInstanceState", savedInstanceState == null ? "true" : "false");
+
+            RelativeLayout layout = (RelativeLayout) getView().findViewById(R.id.main_calllog_top_layout);
+            layout.setVisibility(RelativeLayout.GONE);
 
             //Generate list View from ArrayList
             SwipeMenuCreator creator = new SwipeMenuCreator() {
@@ -205,11 +271,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             getResources().getDisplayMetrics());
                 }
             };
-            callinglogListView = (SwipeMenuListView)getView().findViewById(R.id.main_calllog_listView);
-            listCalllinglog = new ArrayList<>();
-            for (int i = 0; i < 20; i++) {
-                listCalllinglog.add(new CallLogCellModel(i));
-            }
+            callinglogListView = (SwipeMenuListView) getView().findViewById(R.id.main_calllog_listView);
+
             callinglogListView.setMenuCreator(creator);
             mAdapter = new AppAdapter(getActivity());
             isCallingLogInEditMode = false;
@@ -251,24 +314,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.e("Click", "Did Click");
                 }
             });
+
+            callCancelButton = (Button) getView().findViewById(R.id.main_calllog_cancel_button);
+            callCancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    transOutOfEditMode();
+                }
+            });
+
+            callDeleteButton = (Button) getView().findViewById(R.id.main_calllog_delete_button);
+            callDeleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
+
         }
 
-        private void transIntoEditMode()
-        {
+        private void transIntoEditMode() {
             isCallingLogInEditMode = true;
-            RelativeLayout layout = (RelativeLayout)findViewById(R.id.main_calllog_top_layout);
-            Resources resources = getApplicationContext().getResources();
-            DisplayMetrics metrics = resources.getDisplayMetrics();
-            float px = 60 * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-            layout.getLayoutParams().height = (int) px;
+            RelativeLayout layout = (RelativeLayout) getView().findViewById(R.id.main_calllog_top_layout);
+            layout.setVisibility(RelativeLayout.VISIBLE);
             mAdapter.notifyDataSetChanged();
         }
 
-        private void transOutOfEditMode()
-        {
+        private void transOutOfEditMode() {
             isCallingLogInEditMode = false;
-            RelativeLayout layout = (RelativeLayout)findViewById(R.id.main_calllog_top_layout);
-            layout.getLayoutParams().height = 0;
+            RelativeLayout layout = (RelativeLayout) getView().findViewById(R.id.main_calllog_top_layout);
+            layout.setVisibility(RelativeLayout.GONE);
             mAdapter.notifyDataSetChanged();
         }
 
@@ -280,6 +356,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mContext = context;
                 inflater = LayoutInflater.from(mContext);
             }
+
             @Override
             public int getViewTypeCount() {
                 // menu type count
