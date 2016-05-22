@@ -12,7 +12,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity"
             android:theme="@style/Theme.AppCompat.Light"
-            android:label="FamilyPhoneBook">
+            android:label="家庭电话簿">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"
                     />
@@ -32,7 +32,9 @@
 
             />
 
-        <activity android:name=".BlackListActivity"></activity>
+        <activity android:name=".BlackListActivity"
+            android:theme="@style/Theme.AppCompat.Light"
+            android:label="黑名单"></activity>
     </application>
 
 </manifest>

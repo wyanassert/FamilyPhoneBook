@@ -46,7 +46,7 @@ public class BlackListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        overridePendingTransition(R.anim.scale_in, R.anim.alpha_out);
+//        overridePendingTransition(R.anim.scale_in, R.anim.alpha_out);
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_black_list);

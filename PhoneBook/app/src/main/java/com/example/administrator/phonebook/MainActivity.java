@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -51,9 +52,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        String [] mPlanetTitles = {"黑名单", "皮肤","语言","导入/导出", "关于"};
+        String [] mPlanetTitles = {"黑名单", "主题","语言","导入/导出", "关于"};
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, mPlanetTitles);
         mDrawerList.setAdapter(adapter);
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         mFragmentPageAdapter = new PhoneBookFragmentPageAdapter(getSupportFragmentManager());
         mViewPager = (CustomViewPager) findViewById(R.id.pager);
@@ -199,6 +201,35 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         String message = "test";
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
+    }
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            Log.e("Drawer, ", "Select " + Integer.toString(position));
+            switch (position)
+            {
+                case 0:
+                    jumpToBlackList();
+                    break;
+                case 1:
+                    Toast.makeText(getApplicationContext(), "功能尚未实现", Toast.LENGTH_SHORT).show();
+                    break;
+                case 2:
+                    Toast.makeText(getApplicationContext(), "功能尚未实现", Toast.LENGTH_SHORT).show();
+                    break;
+                case 3:
+
+                    break;
+                case 4:
+
+                    break;
+                default:
+                    Log.e("Drawwe ,", "never reach here");
+                    break;
+            }
+            mDrawerLayout.closeDrawer(mDrawerList);
+        }
     }
 }
 
