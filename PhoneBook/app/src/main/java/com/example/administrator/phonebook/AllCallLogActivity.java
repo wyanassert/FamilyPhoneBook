@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -64,6 +65,8 @@ public class AllCallLogActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.call_log_contact);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         listView = (ListView) this.findViewById(R.id.calllog_listView);
         allSelectedCheckBox = (CheckBox)this.findViewById(R.id.calllog_allselect_check);
         cancelButton = (Button) this.findViewById(R.id.calllog_cancel_button);
@@ -96,7 +99,10 @@ public class AllCallLogActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.e("ListView:", "Click:position:" + Integer.toString(position));
                 if (0 == position) {
-                    // TODO: 16/5/1
+                    if(isEditMode)
+                        return;
+                    else
+                        jumpToContactEdit();
                     return;
                 }
                 if (!isEditMode)
@@ -179,6 +185,25 @@ public class AllCallLogActivity extends AppCompatActivity {
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void jumpToContactEdit() {
+        Intent intent = new Intent(this, ContactEditActivity.class);
+//        String message = "test";
+//        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
     }
 
     private void transIntoEditMode()

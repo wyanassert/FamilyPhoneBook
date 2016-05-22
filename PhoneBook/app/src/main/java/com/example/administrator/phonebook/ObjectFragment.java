@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.TypedValue;
@@ -36,27 +37,30 @@ public class ObjectFragment extends Fragment {
     public static final String ARG_OBJECT = "object";
     private SwipeMenuListView callinglogListView;
 
+    private int cellType;
+
     AppAdapter mAdapter;
     boolean isCallingLogInEditMode;
     Button callCancelButton;
     Button callDeleteButton;
     CheckBox callAllSelectCheckBox;
     private ArrayList<CallLogCellModel> listCalllinglog;
+    private ArrayList<ContactModel> listContact;
 
     HashMap<Integer, Boolean> callSelectArray;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle args = getArguments();
+        int type = args.getInt(ARG_OBJECT);
+        cellType = type;
+    }
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-        Bundle args = getArguments();
-        int type = args.getInt(ARG_OBJECT);
-        if (0 == type) {
-            View rootView = inflater.inflate(R.layout.fragment_calling, container, false);
-            return rootView;
-        } else if (1 == type) {
-
-        }
         View rootView = inflater.inflate(R.layout.fragment_calling, container, false);
         return rootView;
     }
@@ -68,12 +72,28 @@ public class ObjectFragment extends Fragment {
         layout.setVisibility(RelativeLayout.GONE);
 
         callSelectArray =  new HashMap<>();
-        listCalllinglog = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            listCalllinglog.add(new CallLogCellModel(i));
+        if(0 == cellType)
+        {
+            listCalllinglog = new ArrayList<>();
+            for (int i = 0; i < 10; i++) {
+                listCalllinglog.add(new CallLogCellModel(i));
+            }
+            for(int i = 0; i < listCalllinglog.size(); i++)
+                callSelectArray.put(i, false);
         }
-        for(int i = 0; i < listCalllinglog.size(); i++)
-            callSelectArray.put(i, false);
+        else
+        if(1 == cellType)
+        {
+            listContact = new ArrayList<>();
+            for(int i = 0; i < 10; i++) {
+                listContact.add(new ContactModel());
+            }
+            for(int i = 0; i  < listContact.size(); i++)
+            {
+                callSelectArray.put(i, false);
+            }
+
+        }
 
         //Generate list View from ArrayList
         SwipeMenuCreator creator = new SwipeMenuCreator() {
@@ -139,6 +159,11 @@ public class ObjectFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.e("Click", "Did Click");
+                if(0 == cellType)
+                    jumpToCallLog();
+                else if(1 == cellType)
+                    jumpToContactEdit();
+
             }
         });
 
@@ -159,6 +184,20 @@ public class ObjectFragment extends Fragment {
         });
 
 
+    }
+
+    private void jumpToCallLog() {
+        Intent intent = new Intent(getContext(), AllCallLogActivity.class);
+//        String message = "test";
+//        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
+    }
+
+    private void jumpToContactEdit() {
+        Intent intent = new Intent(getContext(), ContactEditActivity.class);
+//        String message = "test";
+//        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
     }
 
     private void transIntoEditMode() {
@@ -191,12 +230,21 @@ public class ObjectFragment extends Fragment {
         }
 
         public int getCount() {
-            return listCalllinglog.size();
+            if(0 == cellType)
+                return listCalllinglog.size();
+            else if (1 == cellType)
+                return listContact.size();
+            else
+                return 0;
         }
 
         @Override
         public Object getItem(int position) {
-            return listCalllinglog.get(position);
+            if(0 == cellType)
+                return listCalllinglog.get(position);
+            else
+                return listContact.get(position);
+
         }
 
         @Override
@@ -212,27 +260,44 @@ public class ObjectFragment extends Fragment {
 
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder0 holder0 = null;
-
+            ViewHolder1 holder1 = null;
 
             int type = getItemViewType(position);
             if (convertView == null) {
                 switch (type) {
                     case 0:
-                        convertView = inflater.inflate(R.layout.call_log_cell, parent, false);
-                        holder0 = new ViewHolder0();
-                        holder0.callLength = (TextView) convertView.findViewById(R.id.cell_calllog_calllength);
-                        holder0.imageView = (ImageView) convertView.findViewById(R.id.cell_calllog_image);
-                        holder0.time = (TextView) convertView.findViewById(R.id.cell_calllog_time);
-                        holder0.checkBox = (CheckBox) convertView.findViewById(R.id.cell_calllog_check);
-                        Log.e("convertView = ", "NULL TYPE_2");
-                        convertView.setTag(holder0);
+                        if(0 == cellType)
+                        {
+                            convertView = inflater.inflate(R.layout.call_log_cell, parent, false);
+                            holder0 = new ViewHolder0();
+                            holder0.callLength = (TextView) convertView.findViewById(R.id.cell_calllog_calllength);
+                            holder0.imageView = (ImageView) convertView.findViewById(R.id.cell_calllog_image);
+                            holder0.time = (TextView) convertView.findViewById(R.id.cell_calllog_time);
+                            holder0.checkBox = (CheckBox) convertView.findViewById(R.id.cell_calllog_check);
+                            Log.e("convertView = ", "NULL TYPE_0");
+                            convertView.setTag(holder0);
+                        }
+                        else if(1 == cellType)
+                        {
+                            convertView = inflater.inflate(R.layout.contact_cell, parent, false);
+                            holder1 = new ViewHolder1();
+                            holder1.name = (TextView) convertView.findViewById(R.id.contact_cell_name);
+                            holder1.imageView = (ImageView) convertView.findViewById(R.id.contact_cell_image);
+                            holder1.phoneNumber = (TextView) convertView.findViewById(R.id.contact_cell_phonenumber);
+                            holder1.checkBox = (CheckBox) convertView.findViewById(R.id.contact_cell_check);
+                            Log.e("convertView = ", "NULL TYPE_1");
+                            convertView.setTag(holder1);
+                        }
                         break;
 
                 }
             } else {
                 switch (type) {
                     case 0:
-                        holder0 = (ViewHolder0) convertView.getTag();
+                        if(0 == cellType)
+                            holder0 = (ViewHolder0) convertView.getTag();
+                        else if(1 == cellType)
+                            holder1 = (ViewHolder1) convertView.getTag();
                         break;
 
                 }
@@ -241,7 +306,10 @@ public class ObjectFragment extends Fragment {
             switch (type) {
 
                 case 0:
-                    holder0.fillData(listCalllinglog.get(position), isCallingLogInEditMode);
+                    if(0 == cellType)
+                        holder0.fillData(listCalllinglog.get(position), isCallingLogInEditMode);
+                    else
+                        holder1.fillData(listContact.get(position), isCallingLogInEditMode);
                     break;
 
             }
@@ -303,6 +371,25 @@ public class ObjectFragment extends Fragment {
     }
 
     private class ViewHolder1 {
+        TextView name;
+        ImageView imageView;
+        TextView phoneNumber;
+        CheckBox checkBox;
+
+        public void fillData(ContactModel model, boolean isEditMode) {
+            name.setText(model.name);
+            phoneNumber.setText(model.phonenumber);
+
+
+            if (!isEditMode) {
+                this.imageView.setVisibility(View.VISIBLE);
+                this.checkBox.setVisibility(View.GONE);
+                this.imageView.setImageResource(R.drawable.image_contact_default);
+            } else {
+                this.imageView.setVisibility(View.GONE);
+                this.checkBox.setVisibility(View.VISIBLE);
+            }
+        }
 
     }
 }
