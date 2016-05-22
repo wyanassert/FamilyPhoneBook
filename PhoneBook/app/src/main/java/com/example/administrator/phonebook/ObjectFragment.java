@@ -69,7 +69,7 @@ public class ObjectFragment extends Fragment {
 
         callSelectArray =  new HashMap<>();
         listCalllinglog = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
             listCalllinglog.add(new CallLogCellModel(i));
         }
         for(int i = 0; i < listCalllinglog.size(); i++)
@@ -191,7 +191,7 @@ public class ObjectFragment extends Fragment {
         }
 
         public int getCount() {
-            return 10;
+            return listCalllinglog.size();
         }
 
         @Override

@@ -1,54 +1,30 @@
 package com.example.administrator.phonebook;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.PorterDuff;
 import android.net.Uri;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ButtonBarLayout;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baoyz.swipemenulistview.SwipeMenu;
-import com.baoyz.swipemenulistview.SwipeMenuCreator;
-import com.baoyz.swipemenulistview.SwipeMenuItem;
-import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
@@ -59,7 +35,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     PhoneBookFragmentPageAdapter mFragmentPageAdapter;
     CustomViewPager mViewPager;
-
+    private TabLayout tabLayout;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -76,41 +52,44 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         String [] mPlanetTitles = {"黑名单", "皮肤","语言","导入/导出", "关于"};
-        ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, mPlanetTitles);
+        ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, mPlanetTitles);
         mDrawerList.setAdapter(adapter);
 
         mFragmentPageAdapter = new PhoneBookFragmentPageAdapter(getSupportFragmentManager());
         mViewPager = (CustomViewPager) findViewById(R.id.pager);
         mViewPager.setPagingEnabled(false);
         mViewPager.setAdapter(mFragmentPageAdapter);
-        mViewPager.setOnPageChangeListener(
-                new ViewPager.SimpleOnPageChangeListener() {
-                    @Override
-                    public void onPageSelected(int position) {
-                        getSupportActionBar().setSelectedNavigationItem(position);
-                    }
-                });
 
-        ActionBar bar = getSupportActionBar();
-        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        // Create a tab listener that is called when the user changes tabs.
-        ActionBar.TabListener tabListener = new ActionBar.TabListener() {
-            public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-                // show the given tab
-                mViewPager.setCurrentItem(tab.getPosition());
+        tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setTabMode(TabLayout.MODE_FIXED);
+        tabLayout.getTabAt(0).setText("通话记录");
+        tabLayout.getTabAt(0).setIcon(R.drawable.image_main_call);
+        tabLayout.getTabAt(0).getIcon().setColorFilter(Color.rgb(38, 184, 242), PorterDuff.Mode.MULTIPLY);
+        tabLayout.getTabAt(1).setText("联系人");
+        tabLayout.getTabAt(1).setIcon(R.drawable.image_main_contact);
+        tabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                super.onTabSelected(tab);
+                Log.e("tab ", "Did Select" + tab.getPosition());
+                tab.getIcon().setColorFilter(Color.rgb(38, 184, 242), PorterDuff.Mode.MULTIPLY);
             }
 
-            public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-                // hide the given tab
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                super.onTabUnselected(tab);
+                Log.e("tab ", "Did UnSelected");
+                tab.getIcon().setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
             }
 
-            public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-                // probably ignore this event
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                super.onTabReselected(tab);
+                Log.e("tab ", "Did ReSelected");
             }
-        };
 
-        bar.addTab(bar.newTab().setText("通话记录").setTabListener(tabListener));
-        bar.addTab(bar.newTab().setText("联系人").setTabListener(tabListener));
+        });
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -130,19 +109,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         switch (item.getItemId()) {
             case R.id.action_edit:
                 Toast.makeText(this, "edit", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_add:
-                Toast.makeText(this, "add", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_blacklist:
-                jumpToBlackList();
-                Toast.makeText(this, "blacklist", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_export:
-                Toast.makeText(this, "export", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_about:
-                Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
                 return true;
 
             default:

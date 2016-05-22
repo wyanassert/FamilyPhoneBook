@@ -1,10 +1,8 @@
 package com.example.administrator.phonebook;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -25,7 +23,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.BooleanResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
@@ -54,7 +51,7 @@ public class BlackListActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_black_list);
 
-        modelArray = new ArrayList<BlackListModel>();
+        modelArray = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             modelArray.add(new BlackListModel(i));
         }

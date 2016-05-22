@@ -7,24 +7,8 @@
         app:showAsAction="always" />
 
     <item android:id="@+id/action_edit"
-        android:title="编辑"
-        app:showAsAction="never"/>
+    android:title="删除"
+    app:showAsAction="always"/>
 
-    <item android:id="@+id/action_add"
-        android:title="添加"
-        app:showAsAction="never"/>
 
-    <item android:id="@+id/action_blacklist"
-        android:title="黑名单"
-        app:showAsAction="never"/>
-
-        app:showAsAction="never"/>
-
-    <item android:id="@+id/action_export"
-        android:title="导入/导出"
-        app:showAsAction="never"/>
-
-    <item android:id="@+id/action_about"
-        android:title="关于"
-        app:showAsAction="never"/>
 </menu>
