@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     PhoneBookFragmentPageAdapter mFragmentPageAdapter;
     CustomViewPager mViewPager;
     private TabLayout tabLayout;
+    ActionBar actionBar;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -48,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        actionBar =  getSupportActionBar();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
@@ -67,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tabLayout.getTabAt(0).setText("通话记录");
         tabLayout.getTabAt(0).setIcon(R.drawable.image_main_call);
         tabLayout.getTabAt(0).getIcon().setColorFilter(Color.rgb(38, 184, 242), PorterDuff.Mode.MULTIPLY);
+        actionBar.setTitle("通话记录");
         tabLayout.getTabAt(1).setText("联系人");
         tabLayout.getTabAt(1).setIcon(R.drawable.image_main_contact);
         tabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
@@ -75,6 +80,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 super.onTabSelected(tab);
                 Log.e("tab ", "Did Select" + tab.getPosition());
                 tab.getIcon().setColorFilter(Color.rgb(38, 184, 242), PorterDuff.Mode.MULTIPLY);
+                switch (tab.getPosition())
+                {
+                    case 0:
+                        actionBar.setTitle("通话记录");
+                        break;
+                    case 1:
+                        actionBar.setTitle("联系人");
+                        break;
+
+                    default:
+                        break;
+                }
             }
 
             @Override
