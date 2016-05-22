@@ -102,7 +102,7 @@ public class AllCallLogActivity extends AppCompatActivity {
                     if(isEditMode)
                         return;
                     else
-                        jumpToContactEdit();
+                        jumpToContactEdit(contact);
                     return;
                 }
                 if (!isEditMode)
@@ -199,10 +199,9 @@ public class AllCallLogActivity extends AppCompatActivity {
         }
     }
 
-    private void jumpToContactEdit() {
+    private void jumpToContactEdit(ContactModel model) {
         Intent intent = new Intent(this, ContactEditActivity.class);
-//        String message = "test";
-//        intent.putExtra(EXTRA_MESSAGE, message);
+        intent.putExtra("EXTRASTRING", model);
         startActivity(intent);
     }
 

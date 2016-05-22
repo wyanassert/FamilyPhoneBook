@@ -1,12 +1,13 @@
 package com.example.administrator.phonebook;
 
+import java.io.Serializable;
+
 /**
  * Created by wyan on 16/4/30.
  */
-public class ContactModel {
+public class ContactModel implements Serializable {
     String name;
     String phonenumber;
-    String fromCity;
     String weather;
     String address;
     String email;
@@ -24,16 +25,11 @@ public class ContactModel {
 
     public ContactModel(String name,
             String phonenumber,
-            String fromCity,
-            String weather,
-            String address,
             String email,
             String note)
     {
         this.name = name;
         this.phonenumber = phonenumber;
-        this.weather = fromCity;
-        this.address = address;
         this.email = email;
         this.note = note;
     }

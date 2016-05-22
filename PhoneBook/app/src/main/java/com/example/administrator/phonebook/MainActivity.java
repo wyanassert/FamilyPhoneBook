@@ -1,5 +1,6 @@
 package com.example.administrator.phonebook;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;

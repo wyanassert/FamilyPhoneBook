@@ -1,5 +1,6 @@
 package com.example.administrator.phonebook;
 
+import android.content.Intent;
 import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,7 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ContactEditActivity extends AppCompatActivity {
-    ContactModel model = new ContactModel();
+
+    static String EXTRASTRING = "EXTRASTRING";
+    ContactModel model;
     ImageView image;
     TextView nametext;
     TextView phoneText;
@@ -25,6 +28,8 @@ public class ContactEditActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        model = (ContactModel) intent.getSerializableExtra(EXTRASTRING);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_contact_edit);
 

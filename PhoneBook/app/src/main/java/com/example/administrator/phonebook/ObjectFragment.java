@@ -1,5 +1,6 @@
 package com.example.administrator.phonebook;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -36,6 +37,7 @@ import java.util.HashMap;
 public class ObjectFragment extends Fragment {
     public static final String ARG_OBJECT = "object";
     private SwipeMenuListView callinglogListView;
+    private ContentResolver contentResolver;
 
     private int cellType;
 
@@ -52,6 +54,11 @@ public class ObjectFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        listContact = new ArrayList<>();
+        contentResolver = getContext().getContentResolver();
+        //data = new ArrayList<String>();
+        listContact = GetContactInfo.getcontactinfo(contentResolver);
 
         Bundle args = getArguments();
         int type = args.getInt(ARG_OBJECT);
@@ -84,10 +91,10 @@ public class ObjectFragment extends Fragment {
         else
         if(1 == cellType)
         {
-            listContact = new ArrayList<>();
-            for(int i = 0; i < 10; i++) {
-                listContact.add(new ContactModel());
-            }
+//            listContact = new ArrayList<>();
+//            for(int i = 0; i < 10; i++) {
+//                listContact.add(new ContactModel());
+//            }
             for(int i = 0; i  < listContact.size(); i++)
             {
                 callSelectArray.put(i, false);
@@ -100,17 +107,17 @@ public class ObjectFragment extends Fragment {
 
             @Override
             public void create(SwipeMenu menu) {
-                SwipeMenuItem smsItem = new SwipeMenuItem(getActivity());
-                smsItem.setBackground(new ColorDrawable(Color.rgb(128, 175, 255)));
-                smsItem.setWidth(dp2px(90));
-                smsItem.setIcon(R.drawable.image_sms);
-                menu.addMenuItem(smsItem);
-
                 SwipeMenuItem callItem = new SwipeMenuItem(getActivity());
                 callItem.setBackground(new ColorDrawable(Color.rgb(160, 102, 182)));
                 callItem.setWidth(dp2px(90));
                 callItem.setIcon(R.drawable.image_call);
                 menu.addMenuItem(callItem);
+
+                SwipeMenuItem smsItem = new SwipeMenuItem(getActivity());
+                smsItem.setBackground(new ColorDrawable(Color.rgb(128, 175, 255)));
+                smsItem.setWidth(dp2px(90));
+                smsItem.setIcon(R.drawable.image_sms);
+                menu.addMenuItem(smsItem);
             }
 
             private int dp2px(int dp) {
@@ -127,17 +134,24 @@ public class ObjectFragment extends Fragment {
         callinglogListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                String number;
+                if(0 == cellType)
+                    number = listCalllinglog.get(position).phoneNumber;
+                else if(1 == cellType)
+                    number = listContact.get(position).phonenumber;
+                else
+                    number = "";
                 switch (index) {
                     case 0:
                         Intent tent = new Intent();
                         tent.setAction(Intent.ACTION_SENDTO);
-                        tent.setData(Uri.parse("smsto:" + "13343450215"));
+                        tent.setData(Uri.parse("smsto:" + number));
                         startActivity(tent);
                         break;
                     case 1:
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_CALL);
-                        intent.setData(Uri.parse("tel:" + "13343450215"));
+                        intent.setData(Uri.parse("tel:" + number));
                         startActivity(intent);
                         break;
                 }
@@ -162,7 +176,7 @@ public class ObjectFragment extends Fragment {
                 if(0 == cellType)
                     jumpToCallLog();
                 else if(1 == cellType)
-                    jumpToContactEdit();
+                    jumpToContactEdit(listContact.get(position));
 
             }
         });
@@ -193,10 +207,10 @@ public class ObjectFragment extends Fragment {
         startActivity(intent);
     }
 
-    private void jumpToContactEdit() {
+    private void jumpToContactEdit(ContactModel model) {
         Intent intent = new Intent(getContext(), ContactEditActivity.class);
-//        String message = "test";
-//        intent.putExtra(EXTRA_MESSAGE, message);
+
+        intent.putExtra("EXTRASTRING", model);
         startActivity(intent);
     }
 
