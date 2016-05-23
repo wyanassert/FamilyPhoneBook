@@ -1,6 +1,8 @@
 package com.example.administrator.phonebook;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,7 +41,14 @@ public class ContactEditActivity extends AppCompatActivity {
         emailText = (TextView) this.findViewById(R.id.contact_edit_email);
         noteText = (TextView) this.findViewById(R.id.contact_edit_note);
 
-        image.setImageResource(R.drawable.image_contact_default);
+        if(model.photoBytes == null)
+            image.setImageResource(R.drawable.image_contact_default);
+        else
+        {
+            Bitmap b = BitmapFactory.decodeByteArray(
+                    model.photoBytes,0,model.photoBytes.length);
+            image.setImageBitmap(b);
+        }
         nametext.setText(model.name);
         phoneText.setText(model.phonenumber);
         emailText.setText(model.email);

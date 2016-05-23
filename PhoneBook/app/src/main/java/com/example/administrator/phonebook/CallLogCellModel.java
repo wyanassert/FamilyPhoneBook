@@ -1,5 +1,9 @@
 package com.example.administrator.phonebook;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -14,6 +18,7 @@ public class CallLogCellModel { //name and phone in not necessory , may not be u
     int callLengthSecond;
     boolean isCallIn;
     boolean isHangUp;
+
 
     public CallLogCellModel(int i) {
         this.name = "wyan" + Integer.toString(i);

@@ -5,6 +5,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -37,6 +38,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.w3c.dom.Text;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Console;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -201,6 +203,16 @@ public class AllCallLogActivity extends AppCompatActivity {
 
     private void jumpToContactEdit(ContactModel model) {
         Intent intent = new Intent(this, ContactEditActivity.class);
+        if(model.bit != null)
+        {
+            Bitmap b = model.bit;
+            ByteArrayOutputStream bs = new ByteArrayOutputStream();
+            b.compress(Bitmap.CompressFormat.PNG, 50, bs);
+            model.photoBytes = bs.toByteArray();
+            model.bit = null;
+        }
+        else
+            model.photoBytes = null;
         intent.putExtra("EXTRASTRING", model);
         startActivity(intent);
     }

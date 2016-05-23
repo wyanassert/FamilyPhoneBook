@@ -1,5 +1,7 @@
 package com.example.administrator.phonebook;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 
 /**
@@ -12,6 +14,8 @@ public class ContactModel implements Serializable {
     String address;
     String email;
     String note;
+    Bitmap bit;
+    byte[] photoBytes;
 
     public ContactModel()
     {
@@ -32,5 +36,18 @@ public class ContactModel implements Serializable {
         this.phonenumber = phonenumber;
         this.email = email;
         this.note = note;
+    }
+
+    public ContactModel(String name,
+                        String phonenumber,
+                        String email,
+                        String note,
+                        Bitmap bit)
+    {
+        this.name = name;
+        this.phonenumber = phonenumber;
+        this.email = email;
+        this.note = note;
+        this.bit = bit;
     }
 }

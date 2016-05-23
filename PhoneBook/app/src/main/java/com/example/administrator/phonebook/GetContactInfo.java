@@ -32,6 +32,7 @@ public class GetContactInfo {
         static String email;
         static int height;
         static private ArrayList<ContactModel> contactModel;
+        static Bitmap bit;
 
         static public ArrayList getcontactinfo(ContentResolver contentResolver){
             data = new ArrayList<Map<String,String>>();
@@ -69,11 +70,12 @@ public class GetContactInfo {
                     Uri photo = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long.parseLong(Integer.toString(id)));
                     InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(contentResolver, photo, true);
                     if(input != null){
-                        Bitmap bit= BitmapFactory.decodeStream(input);
+                        bit= BitmapFactory.decodeStream(input);
                         height = bit.getHeight();
                     }
                     else{
                         height = 0;
+                        bit = null;
                     }
                 }
 //                item = new HashMap<String,String>();
@@ -88,7 +90,11 @@ public class GetContactInfo {
                 {
 //                    Log.e("ADD", Integer.toString(contactModel.size()));
 //                    Log.e(name, phonenumber);
-                    ContactModel model = new ContactModel(name, phonenumber, email, "");
+                    ContactModel model;
+                    if(bit == null)
+                        model = new ContactModel(name, phonenumber, email, "");
+                    else
+                        model = new ContactModel(name, phonenumber, email, "", bit);
                     contactModel.add(model);
                 }
             }

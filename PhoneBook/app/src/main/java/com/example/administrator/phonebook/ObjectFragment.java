@@ -3,6 +3,7 @@ package com.example.administrator.phonebook;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -27,6 +28,7 @@ import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -142,13 +144,13 @@ public class ObjectFragment extends Fragment {
                 else
                     number = "";
                 switch (index) {
-                    case 0:
+                    case 1:
                         Intent tent = new Intent();
                         tent.setAction(Intent.ACTION_SENDTO);
                         tent.setData(Uri.parse("smsto:" + number));
                         startActivity(tent);
                         break;
-                    case 1:
+                    case 0:
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_CALL);
                         intent.setData(Uri.parse("tel:" + number));
@@ -209,7 +211,16 @@ public class ObjectFragment extends Fragment {
 
     private void jumpToContactEdit(ContactModel model) {
         Intent intent = new Intent(getContext(), ContactEditActivity.class);
-
+        if(model.bit != null)
+        {
+            Bitmap b = model.bit;
+            ByteArrayOutputStream bs = new ByteArrayOutputStream();
+            b.compress(Bitmap.CompressFormat.PNG, 50, bs);
+            model.photoBytes = bs.toByteArray();
+            model.bit = null;
+        }
+        else
+            model.photoBytes = null;
         intent.putExtra("EXTRASTRING", model);
         startActivity(intent);
     }
@@ -398,7 +409,10 @@ public class ObjectFragment extends Fragment {
             if (!isEditMode) {
                 this.imageView.setVisibility(View.VISIBLE);
                 this.checkBox.setVisibility(View.GONE);
-                this.imageView.setImageResource(R.drawable.image_contact_default);
+                if(model.bit == null)
+                    this.imageView.setImageResource(R.drawable.image_contact_default);
+                else
+                    this.imageView.setImageBitmap(model.bit);
             } else {
                 this.imageView.setVisibility(View.GONE);
                 this.checkBox.setVisibility(View.VISIBLE);
