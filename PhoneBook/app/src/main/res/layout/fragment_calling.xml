@@ -29,10 +29,20 @@
             android:layout_margin="10dp"/>
     </RelativeLayout>
 
-    <com.baoyz.swipemenulistview.SwipeMenuListView
-        android:id="@+id/main_calllog_listView"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="wrap_content">
+
+        <com.baoyz.swipemenulistview.SwipeMenuListView
+            android:id="@+id/main_calllog_listView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+        <com.example.administrator.phonebook.BladeView
+            android:id="@+id/bv_blade"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
 
 </LinearLayout>

@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -38,8 +39,15 @@ import java.util.HashMap;
  */
 public class ObjectFragment extends Fragment {
     public static final String ARG_OBJECT = "object";
+
+    private static final String[] strs = new String[] {
+            "收藏", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "#"};
+    private static final int[] counts = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
     private SwipeMenuListView callinglogListView;
     private ContentResolver contentResolver;
+    private BladeView mBladeView;
+    private ArrayList<People> peopleList;
 
     private int cellType;
 
@@ -58,10 +66,6 @@ public class ObjectFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         listContact = new ArrayList<>();
-        contentResolver = getContext().getContentResolver();
-        //data = new ArrayList<String>();
-        listContact = GetContactInfo.getcontactinfo(contentResolver);
-
         Bundle args = getArguments();
         int type = args.getInt(ARG_OBJECT);
         cellType = type;
@@ -79,10 +83,12 @@ public class ObjectFragment extends Fragment {
 
         RelativeLayout layout = (RelativeLayout) getView().findViewById(R.id.main_calllog_top_layout);
         layout.setVisibility(RelativeLayout.GONE);
+        mBladeView = (BladeView) getView().findViewById(R.id.bv_blade);
 
         callSelectArray =  new HashMap<>();
         if(0 == cellType)
         {
+            mBladeView.setVisibility(View.GONE);
             listCalllinglog = new ArrayList<>();
             for (int i = 0; i < 10; i++) {
                 listCalllinglog.add(new CallLogCellModel(i));
@@ -97,7 +103,8 @@ public class ObjectFragment extends Fragment {
 //            for(int i = 0; i < 10; i++) {
 //                listContact.add(new ContactModel());
 //            }
-            for(int i = 0; i  < listContact.size(); i++)
+            getData();
+            for(int i = 0; i  < peopleList.size(); i++)
             {
                 callSelectArray.put(i, false);
             }
@@ -128,11 +135,25 @@ public class ObjectFragment extends Fragment {
             }
         };
         callinglogListView = (SwipeMenuListView) getView().findViewById(R.id.main_calllog_listView);
-
+        mBladeView = (BladeView) getActivity().findViewById(R.id.bv_blade);
+        final MySectionIndexer mIndexer = new MySectionIndexer(strs, counts);
+        mBladeView.setOnItemClickListener(new BladeView.OnItemClickListener() {
+            @Override
+            public void onItemClick(int item) {
+                callinglogListView.setSelection(mIndexer.getPositionForSection(item));
+            }
+        });
+        MyAdapter myAdapter = new MyAdapter(getActivity(), mIndexer, peopleList);
+//        callinglogListView.setAdapter(myAdapter);
         callinglogListView.setMenuCreator(creator);
         mAdapter = new AppAdapter(getActivity());
         isCallingLogInEditMode = false;
-        callinglogListView.setAdapter(mAdapter);
+//        callinglogListView.setAdapter(mAdapter);
+        if(0 == cellType)
+            callinglogListView.setAdapter(mAdapter);
+        else if (1 == cellType)
+            callinglogListView.setAdapter(myAdapter);
+
         callinglogListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
@@ -140,21 +161,21 @@ public class ObjectFragment extends Fragment {
                 if(0 == cellType)
                     number = listCalllinglog.get(position).phoneNumber;
                 else if(1 == cellType)
-                    number = listContact.get(position).phonenumber;
+                    number = peopleList.get(position).getPeoplePhoneNumber();
                 else
                     number = "";
                 switch (index) {
-                    case 1:
-                        Intent tent = new Intent();
-                        tent.setAction(Intent.ACTION_SENDTO);
-                        tent.setData(Uri.parse("smsto:" + number));
-                        startActivity(tent);
-                        break;
                     case 0:
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_CALL);
                         intent.setData(Uri.parse("tel:" + number));
                         startActivity(intent);
+                        break;
+                    case 1:
+                        Intent tent = new Intent();
+                        tent.setAction(Intent.ACTION_SENDTO);
+                        tent.setData(Uri.parse("smsto:" + number));
+                        startActivity(tent);
                         break;
                 }
                 // false : close the menu; true : not close the menu
@@ -178,7 +199,10 @@ public class ObjectFragment extends Fragment {
                 if(0 == cellType)
                     jumpToCallLog();
                 else if(1 == cellType)
-                    jumpToContactEdit(listContact.get(position));
+                {
+                    People people = peopleList.get(position);
+                    jumpToContactEdit(new ContactModel(people.getPeopleName(), people.getPeoplePhoneNumber(), people.getPeopleEmail(), people.getPeopleNote(), people.getmPeopleImage()));
+                }
 
             }
         });
@@ -419,5 +443,38 @@ public class ObjectFragment extends Fragment {
             }
         }
 
+    }
+
+    private void getData()
+    {
+        contentResolver = getContext().getContentResolver();
+        //data = new ArrayList<String>();
+        listContact = GetContactInfo.getcontactinfo(contentResolver);
+        peopleList = new ArrayList<People>();
+        
+
+        for(int i = 0; i < listContact.size(); i++)
+        {
+            char result = CharacterParser.getInstance().getSelling(listContact.get(i).name).charAt(0);
+            if (result >= 'a' && result <= 'z')
+            {
+
+                People people = new People(listContact.get(i).bit, listContact.get(i).name, listContact.get(i).phonenumber, listContact.get(i).email, listContact.get(i).note);
+                int currentIndex = sum(counts, result-'a'+ 1);
+                Log.e("Debug", Integer.toString(currentIndex) + " " + Integer.toString(peopleList.size()) );
+                peopleList.add(currentIndex, people);
+                counts[result-'a'+ 1]++;
+
+            }
+        }
+
+    }
+
+    int sum(int[] counts, int index)
+    {
+        int result = 0;
+        for(int i = 0; i < index; i++)
+            result += counts[i];
+        return result;
     }
 }
