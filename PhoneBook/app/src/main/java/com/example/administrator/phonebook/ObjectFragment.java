@@ -1,8 +1,11 @@
 package com.example.administrator.phonebook;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -10,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IntegerRes;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.TypedValue;
@@ -30,9 +34,14 @@ import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by wyan on 16/5/22.
@@ -89,10 +98,11 @@ public class ObjectFragment extends Fragment {
         if(0 == cellType)
         {
             mBladeView.setVisibility(View.GONE);
-            listCalllinglog = new ArrayList<>();
-            for (int i = 0; i < 10; i++) {
-                listCalllinglog.add(new CallLogCellModel(i));
-            }
+//            listCalllinglog = new ArrayList<>();
+//            for (int i = 0; i < 10; i++) {
+//                listCalllinglog.add(new CallLogCellModel(i));
+//            }
+            getCallLog();
             for(int i = 0; i < listCalllinglog.size(); i++)
                 callSelectArray.put(i, false);
         }
@@ -141,6 +151,7 @@ public class ObjectFragment extends Fragment {
             @Override
             public void onItemClick(int item) {
                 callinglogListView.setSelection(mIndexer.getPositionForSection(item));
+//                Log.e("BladeView", "DidClick +" + Integer.toString(mIndexer.getPositionForSection(item)));
             }
         });
         MyAdapter myAdapter = new MyAdapter(getActivity(), mIndexer, peopleList);
@@ -197,7 +208,7 @@ public class ObjectFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.e("Click", "Did Click");
                 if(0 == cellType)
-                    jumpToCallLog();
+                    jumpToCallLog(new Integer(position));
                 else if(1 == cellType)
                 {
                     People people = peopleList.get(position);
@@ -226,10 +237,10 @@ public class ObjectFragment extends Fragment {
 
     }
 
-    private void jumpToCallLog() {
+    private void jumpToCallLog(Integer integer) {
         Intent intent = new Intent(getContext(), AllCallLogActivity.class);
 //        String message = "test";
-//        intent.putExtra(EXTRA_MESSAGE, message);
+        intent.putExtra("EXTRASTRING", integer);
         startActivity(intent);
     }
 
@@ -381,8 +392,12 @@ public class ObjectFragment extends Fragment {
             String hour = String.valueOf(calendar.get(Calendar.HOUR));
             String minite = String.valueOf(calendar.get(Calendar.MINUTE));
             String second = String.valueOf(calendar.get(Calendar.SECOND));
-            this.time.setText(year + "-" + month + "-" + day + "-" + hour + "-" + minite + "-" + second);
-            String tmp = "time: ";
+//            this.time.setText(year + "-" + month + "-" + day + "-" + hour + "-" + minite + "-" + second);
+            if(model.name == null || model.name.length() == 0)
+                this.time.setText(model.phoneNumber);
+            else
+                this.time.setText(model.name);
+            String tmp = "通话时间: ";
             if (model.callLengthSecond > 3600 * 24)
                 tmp += "long long";
             else {
@@ -400,18 +415,18 @@ public class ObjectFragment extends Fragment {
                 tmpInt = length;
                 tmp += Integer.toString(tmpInt) + "s";
             }
-            this.callLength.setText(model.name + tmp);
+            this.callLength.setText(tmp);
             if (!isEditMode) {
                 this.imageView.setVisibility(View.VISIBLE);
                 this.checkBox.setVisibility(View.GONE);
                 if (!model.isHangUp && model.isCallIn)
-                    this.imageView.setImageResource(R.drawable.image_callin_success);
+                    this.imageView.setImageResource(R.drawable.image_callin);
                 else if (model.isHangUp && model.isCallIn)
-                    this.imageView.setImageResource(R.drawable.image_callin_fail);
+                    this.imageView.setImageResource(R.drawable.image_callfail);
                 else if (!model.isHangUp && !model.isCallIn)
-                    this.imageView.setImageResource(R.drawable.image_callout_success);
+                    this.imageView.setImageResource(R.drawable.image_callout);
                 else
-                    this.imageView.setImageResource(R.drawable.image_callout_fail);
+                    this.imageView.setImageResource(R.drawable.image_callfail);
             } else {
                 this.imageView.setVisibility(View.GONE);
                 this.checkBox.setVisibility(View.VISIBLE);
@@ -451,14 +466,31 @@ public class ObjectFragment extends Fragment {
         //data = new ArrayList<String>();
         listContact = GetContactInfo.getcontactinfo(contentResolver);
         peopleList = new ArrayList<People>();
-        
+
 
         for(int i = 0; i < listContact.size(); i++)
         {
             char result = CharacterParser.getInstance().getSelling(listContact.get(i).name).charAt(0);
+            Set storeSet = new HashSet();
+            String[] mStoreSign = {"爸", "姐"};
+            for (int j = 0;j < mStoreSign.length; j++)
+                storeSet.add(mStoreSign[j]);
+            //写入文件
+            writeFile("data", storeSet);
+            Set readSet = readFile("data");
+            //遍历输出
+            Iterator it = readSet.iterator();
+            while (it.hasNext()) {
+                Object o = it.next();
+                if (listContact.get(i).name.indexOf(o.toString()) >= 0) {
+                    People people = new People(listContact.get(i).bit, listContact.get(i).name, listContact.get(i).phonenumber, listContact.get(i).email, listContact.get(i).note);
+                    peopleList.add(0, people);
+                    counts[0]++;
+                    break;
+                }
+            }
             if (result >= 'a' && result <= 'z')
             {
-
                 People people = new People(listContact.get(i).bit, listContact.get(i).name, listContact.get(i).phonenumber, listContact.get(i).email, listContact.get(i).note);
                 int currentIndex = sum(counts, result-'a'+ 1);
                 Log.e("Debug", Integer.toString(currentIndex) + " " + Integer.toString(peopleList.size()) );
@@ -476,5 +508,30 @@ public class ObjectFragment extends Fragment {
         for(int i = 0; i < index; i++)
             result += counts[i];
         return result;
+    }
+
+    private void writeFile(String fileName, Set storeSet) {
+        SharedPreferences sp = getContext().getSharedPreferences(fileName, getContext().MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putStringSet("sign", storeSet);
+        editor.commit();
+    }
+
+    private Set readFile(String fileName) {;
+        Set readSet = new HashSet();
+        SharedPreferences sp = getContext().getSharedPreferences(fileName, getContext().MODE_PRIVATE);
+        readSet = sp.getStringSet("sign", readSet);
+        return readSet;
+    }
+
+    private void getCallLog()
+    {
+        int perm = getContext().checkCallingOrSelfPermission("android.permission.READ_CALL_LOG");
+        if (perm != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_CALL_LOG}, 0);
+        }
+        RecordRead recordRead = new RecordRead();
+        listCalllinglog = recordRead.readRecord(getActivity());
     }
 }

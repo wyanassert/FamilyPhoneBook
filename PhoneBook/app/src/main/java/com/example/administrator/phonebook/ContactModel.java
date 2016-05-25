@@ -27,6 +27,18 @@ public class ContactModel implements Serializable {
         this.note = "never say never";
     }
 
+    public ContactModel(String phonenumber)
+    {
+        this.name = "";
+        this.phonenumber = phonenumber;
+        this.weather = "";
+        this.address = "";
+        this.email = "";
+        this.note = "";
+    }
+
+
+
     public ContactModel(String name,
             String phonenumber,
             String email,

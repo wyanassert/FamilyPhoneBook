@@ -2,6 +2,7 @@ package com.example.administrator.phonebook;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -57,6 +58,7 @@ public class AllCallLogActivity extends AppCompatActivity {
     private ArrayList<CallLogCellModel> listString;
     boolean isEditMode;
     private static HashMap<Integer, Boolean> isSelected;
+//    private PeopleCalllogModel contactCallLogModel;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -67,21 +69,40 @@ public class AllCallLogActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.call_log_contact);
+        Intent intent = getIntent();
+        Integer integer = (Integer) intent.getSerializableExtra("EXTRASTRING");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        listString = (new RecordRead()).getArrayIndex(integer.intValue());
         listView = (ListView) this.findViewById(R.id.calllog_listView);
         allSelectedCheckBox = (CheckBox)this.findViewById(R.id.calllog_allselect_check);
         cancelButton = (Button) this.findViewById(R.id.calllog_cancel_button);
         deleteButton = (Button) this.findViewById(R.id.calllog_delete_button);
-        listString = new ArrayList<CallLogCellModel>();
         isEditMode = false;
         isSelected = new HashMap<Integer, Boolean>();
 
-        for (int i = 0; i < 20; i++) {
-            listString.add(new CallLogCellModel(i));
+//        if(contactCallLogModel == null)
+//        {
+//            listString = new ArrayList<CallLogCellModel>();
+//            for (int i = 0; i < 20; i++) {
+//                listString.add(new CallLogCellModel(i));
+//            }
+//        }
+//        else
+//            listString = contactCallLogModel.callLogs;
+//        contact = new ContactModel();
+        ContentResolver contentResolver;
+        contentResolver = this.getContentResolver();
+        ArrayList<ContactModel> tmpArray = GetContactInfo.getcontactinfo(contentResolver);
+        for(int i = 0; i < tmpArray.size(); i++)
+        {
+            if(tmpArray.get(i).phonenumber.equals(listString.get(0).phoneNumber))
+            {
+                contact = tmpArray.get(i);
+                break;
+            }
         }
-        contact = new ContactModel();
-
+        if(contact == null)
+            contact = new ContactModel(listString.get(0).phoneNumber);
         resetIsSelect(false);
         listAdapter = new MyAdapter(this);
         listView.setAdapter(listAdapter);
@@ -351,7 +372,10 @@ public class AllCallLogActivity extends AppCompatActivity {
 
         public void fillData(ContactModel model) {
             this.phoneNumber.setText(model.phonenumber);
-            this.imageView.setImageResource(R.drawable.image_contact_default);
+            if(model.bit == null)
+                this.imageView.setImageResource(R.drawable.image_contact_default);
+            else
+                this.imageView.setImageBitmap(model.bit);
             this.name.setText(model.name);
             this.address.setText(model.address);
             this.email.setText(model.email);
@@ -381,8 +405,8 @@ public class AllCallLogActivity extends AppCompatActivity {
             String hour = String.valueOf(calendar.get(Calendar.HOUR));
             String minite = String.valueOf(calendar.get(Calendar.MINUTE));
             String second = String.valueOf(calendar.get(Calendar.SECOND));
-            this.time.setText(year + "-" + month + "-" + day + "-" + hour + "-" + minite + "-" + second);
-            String tmp = "time: ";
+            this.time.setText(year + "-" + month + "-" + day + " " + hour + ":" + minite + ":" + second);
+            String tmp = "通话时间: ";
             if (model.callLengthSecond > 3600 * 24)
                 tmp += "long long";
             else {
@@ -400,18 +424,18 @@ public class AllCallLogActivity extends AppCompatActivity {
                 tmpInt = length;
                 tmp += Integer.toString(tmpInt) + "s";
             }
-            this.callLength.setText(model.name + tmp);
+            this.callLength.setText(tmp);
             if (!isEditMode) {
                 this.imageView.setVisibility(View.VISIBLE);
                 this.checkBox.setVisibility(View.GONE);
                 if (!model.isHangUp && model.isCallIn)
-                    this.imageView.setImageResource(R.drawable.image_callin_success);
+                    this.imageView.setImageResource(R.drawable.image_callin);
                 else if (model.isHangUp && model.isCallIn)
-                    this.imageView.setImageResource(R.drawable.image_callin_fail);
+                    this.imageView.setImageResource(R.drawable.image_callfail);
                 else if (!model.isHangUp && !model.isCallIn)
-                    this.imageView.setImageResource(R.drawable.image_callout_success);
+                    this.imageView.setImageResource(R.drawable.image_callout);
                 else
-                    this.imageView.setImageResource(R.drawable.image_callout_fail);
+                    this.imageView.setImageResource(R.drawable.image_callfail);
             } else {
                 this.imageView.setVisibility(View.GONE);
                 this.checkBox.setVisibility(View.VISIBLE);

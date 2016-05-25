@@ -51,9 +51,15 @@ public class BlackListActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_black_list);
 
+        ArrayList<String> phonenumbers = new ArrayList<>();
+        phonenumbers.add("4001004613");
+        phonenumbers.add("17002012894");
+        phonenumbers.add("01056332004");
+        phonenumbers.add("15681209243");
+        phonenumbers.add("4001004434");
         modelArray = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            modelArray.add(new BlackListModel(i));
+        for (int i = 0; i < phonenumbers.size(); i++) {
+            modelArray.add(new BlackListModel(phonenumbers.get(i)));
         }
         isSelected = new HashMap<>();
         resetIsSelect(false);

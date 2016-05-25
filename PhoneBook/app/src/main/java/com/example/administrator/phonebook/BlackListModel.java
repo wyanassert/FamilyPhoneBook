@@ -16,9 +16,8 @@ public class BlackListModel {
         this.note = "骚扰电话";
     }
 
-    public BlackListModel(int i)
+    public BlackListModel(String phoneNumber)
     {
-        this.phoneNumber = "12345";
-        this.note = "骚扰电话" + Integer.toString(i);
+        this.phoneNumber = phoneNumber;
     }
 }

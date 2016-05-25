@@ -35,6 +35,8 @@ public class GetContactInfo {
         static Bitmap bit;
 
         static public ArrayList getcontactinfo(ContentResolver contentResolver){
+            if(contactModel != null)
+                return contactModel;
             data = new ArrayList<Map<String,String>>();
             contactModel = new ArrayList<>();
 
@@ -92,9 +94,9 @@ public class GetContactInfo {
 //                    Log.e(name, phonenumber);
                     ContactModel model;
                     if(bit == null)
-                        model = new ContactModel(name, phonenumber, email, "");
+                        model = new ContactModel(name, phonenumber, email, "这个人很懒，什么都没留下");
                     else
-                        model = new ContactModel(name, phonenumber, email, "", bit);
+                        model = new ContactModel(name, phonenumber, email, "这个人很懒，什么都没留下", bit);
                     contactModel.add(model);
                 }
             }
