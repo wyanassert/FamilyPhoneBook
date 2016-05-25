@@ -1,20 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.administrator.phonebook" >
+    package="com.example.administrator.phonebook">、
+
+    <uses-permission android:name="android.permission.READ_CALL_LOG"/>
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG"/>
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name = "android.permission.READ_CONTACTS"/>
+
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
-        <activity android:name=".MainActivity" >
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:label="家庭电话簿"
+            android:theme="@style/Theme.AppCompat.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".AllCallLogActivity"
+            android:label="通话记录"
+            android:theme="@style/Theme.AppCompat.Light" />
+        <!--
+ ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
+        -->
+        <meta-data android:name="com.google.android.gms.version" />
+
+        <activity
+            android:name=".BlackListActivity"
+            android:label="黑名单"
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity
+            android:name=".AboutActivity"
+            android:label="关于"
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity android:name=".ContactEditActivity"
+            android:label="联系人详情"
+            android:theme="@style/Theme.AppCompat.Light"></activity>
     </application>
 
 </manifest>
